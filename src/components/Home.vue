@@ -56,9 +56,15 @@
 
         </div>
 
+        <div class="info-btn-wrapper">
+            <div class="info-btn info" @click="reload"><b>🔄 重整日曆</b></div>
+        </div>
 
         <iframe src="https://calendar.google.com/calendar/embed?src=proladon%40gmail.com&ctz=Asia%2FTaipei"
-            style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+            id="Calendar"
+            style="border: none" width="800" height="600" frameborder="0" scrolling="yes"></iframe>
+
+
 </template>
 
 <script lang="ts">
@@ -186,6 +192,13 @@
                }
             )
 
+
+            const reload = (): void=>{
+                const target: any = (document.getElementById('Calendar') as HTMLIFrameElement)
+                const nsrc = target.src
+                target.src = nsrc
+            }
+
           
            return{
                date,
@@ -193,7 +206,8 @@
                submit,
                selectPeriod,
                formInputData,
-               checkDate
+               checkDate,
+               reload
                
            }
        }
@@ -215,10 +229,12 @@
     display: flex;
     justify-content: center;
 }
+
 iframe{
     width: 80%;
     margin-bottom: 50px;
     border-radius: 5px;
+    margin-top: 10px;
 }
 
 .rent-calssroom-form{
@@ -247,8 +263,13 @@ iframe{
         display: block;
         border-radius: 5px;
         border: none;
-        outline-color: rgb(121, 198, 226);
+        outline: none;
+        // outline-color: rgb(58, 70, 75);
         padding: 5px;
+
+        &:focus{
+            background-color: rgb(193, 240, 255);
+        }
     }
 
     .input-wrapper{
