@@ -68,7 +68,7 @@
                     >
                     <p id="warn-p">註: 只能借用未來3周內的時間</p>
 
-                    <p class="input-title">借用時段</p>
+                    <p class="input-title">借用時段 (可複選)</p>
                     <div class="time-period-select" @click="selectPeriod($event)">
                         <div class="time-period" v-for="(period, index) in timePeriod" :key="period" :id="`time-${index}`">{{period}}</div>
                     </div>
@@ -151,14 +151,35 @@
                 const target: HTMLDivElement = (e.target as HTMLDivElement)
                 if(target.className === 'time-period-select') return
 
-                Array.from(document.getElementsByClassName('time-period'))
-                    .forEach(element => {
-                        element.classList.remove('selected')
-                    });
-                
-                target.classList.add('selected')
+                if (target.innerText === '全天') {
+                    Array.from(document.getElementsByClassName('time-period'))
+                        .forEach(element => {
+                            element.classList.remove('selected')
+                        });
+                    target.classList.add('selected')
+                    formInputData.TimePeriod = '全天'
+                    return
+                }
 
-                formInputData.TimePeriod = target.innerHTML
+                if(formInputData.TimePeriod === '全天'){
+                    Array.from(document.getElementsByClassName('time-period'))
+                        .forEach(element => {
+                            element.classList.remove('selected')
+                        });
+                    formInputData.TimePeriod = ''
+
+                }
+
+                if(target.classList.contains('selected')){
+                    target.classList.remove('selected')
+                    formInputData.TimePeriod = formInputData.TimePeriod.replace(target.innerHTML + ' | ', '')
+                }else{
+                    target.classList.add('selected')
+                    formInputData.TimePeriod += target.innerHTML + ' | '
+
+                }
+
+                
             }
 
             const checkDate = (e: Event): void =>{
