@@ -136,6 +136,7 @@
                    phone: ''
                },
                classMate:[],
+               classMateString: '',
                applyDate: date.format(new Date(), 'YYYY-MM-DD'),
                rentDate: '',
                TimePeriod: '',
@@ -173,8 +174,21 @@
 
            const submit = async ()=>{
             //    console.table(formInputData)
-               console.log(formInputData)
-               
+
+                // Check if cool down
+                const isCoolDown: boolean = JSON.parse((localStorage.getItem('coolDown') as any))
+                if(isCoolDown) {
+                    toast.warning('Cooling Down')
+                    return
+                }
+
+                formInputData.classMate.forEach((user: any)=>{
+                    formInputData.classMateString += `【姓名: ${user.name}  /  班級座號: ${user.classNum}  /  學號: ${user.studentID}  /  電話: ${user.phone}】    ||    `
+                })
+
+                console.log(formInputData)
+
+                // Data Validate
                try {
                    const validation = await formValidation.validate(formInputData)
                    if(validation.error){
@@ -196,19 +210,25 @@
                 })
 
                 if (inputInvalid) return
+
             
                 //send email
                 // todo: cooldown
-                // emailjs.send('service_7u32gvo','template_sr5lks2', formInputData)
-                //     .then(
-                //         (response): void=>{
-                //             console.log('SUCCESS!', response.status);
-                //             toast.success('submit')
-                //         }, 
-                //         (err): void=>{
-                //             toast.error(err)
-                //         }
-                //     );
+                emailjs.send('service_7u32gvo','template_sr5lks2', formInputData)
+                    .then(
+                        (response): void=>{
+                            console.log('SUCCESS!', response.status);
+                            toast.success('submit')
+
+                            localStorage.setItem('coolDown', 'true')
+                            setTimeout(() => {
+                                localStorage.setItem('coolDown', 'false')
+                            }, 600000);
+                        }, 
+                        (err): void=>{
+                            toast.error(err)
+                        }
+                    );
 
                 
            }

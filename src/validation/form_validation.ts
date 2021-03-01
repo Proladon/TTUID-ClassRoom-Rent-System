@@ -40,6 +40,7 @@ export const formValidation = Joi.object({
         .required(),
     
     classMate: Joi.array().items(user('共同使用人')),
+    classMateString: Joi.string(),
     rentDate: Joi.string()
         .required()
         .messages({
