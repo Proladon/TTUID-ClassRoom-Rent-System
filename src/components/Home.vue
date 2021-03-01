@@ -83,9 +83,10 @@
             <div class="btn info-btn info" @click="reload"><b>🔄 重整日曆</b></div>
         </div>
 
-        <iframe src="https://calendar.google.com/calendar/embed?src=proladon%40gmail.com&ctz=Asia%2FTaipei"
+        <iframe src="https://calendar.google.com/calendar/embed?src=gm.ttu.edu.tw_8o871m4gfckf3o49nlhkv5cpdk%40group.calendar.google.com&ctz=Asia%2FTaipei" 
             id="Calendar"
-            style="border: none" width="800" height="600" frameborder="0" scrolling="yes"></iframe>
+            style="border: none" width="800" height="600" frameborder="0" scrolling="yes">
+        </iframe>
 
 
 </template>
@@ -105,8 +106,12 @@
        name: 'Home',
        components:{ArrayInput},
        setup(){
+            
+            // emailjs.com
+           init("user_WjYj4YxrXX5vvj4wlw4nv");
+           const ServiceID = 'cyfan'
+           const TemplateID= 'template_t8exz6j'
 
-           init("user_x0clkplkmDu3SDcl9sqEC");
            const toast = useToast()
            const timePeriod = reactive<Array<string>>([
                '08:10 ~ 11:30', 
@@ -161,7 +166,6 @@
                 const today = new Date(formInputData.applyDate)
                 const sub = date.subtract(rentDate, today).toDays()
                 const target = (document.getElementById('input_rentDate') as HTMLInputElement)
-                console.log(sub)
                 if (sub<= 0 || sub > 21){
                     target.classList.add('input-invalid')
                 }
@@ -173,20 +177,22 @@
 
 
            const submit = async ()=>{
-            //    console.table(formInputData)
 
                 // Check if cool down
-                const isCoolDown: boolean = JSON.parse((localStorage.getItem('coolDown') as any))
-                if(isCoolDown) {
-                    toast.warning('Cooling Down')
-                    return
+                const lastSend: string | null  = localStorage.getItem('lastSend')
+                if(lastSend){
+                    const last = new Date(lastSend)
+                    const sub = date.subtract(new Date, last).toMinutes()
+
+                    if (sub < 10){
+                        toast.warning(`申請提交冷卻中 ! 還需等待 ${10 - Math.round(sub)} 分鐘`)
+                        return
+                    }
                 }
 
                 formInputData.classMate.forEach((user: any)=>{
                     formInputData.classMateString += `【姓名: ${user.name}  /  班級座號: ${user.classNum}  /  學號: ${user.studentID}  /  電話: ${user.phone}】    ||    `
                 })
-
-                console.log(formInputData)
 
                 // Data Validate
                try {
@@ -210,27 +216,22 @@
                 })
 
                 if (inputInvalid) return
-
-            
+                
                 //send email
                 // todo: cooldown
-                emailjs.send('service_7u32gvo','template_sr5lks2', formInputData)
+                emailjs.send(ServiceID,TemplateID, formInputData)
                     .then(
                         (response): void=>{
                             console.log('SUCCESS!', response.status);
-                            toast.success('submit')
+                            toast.success('已成功送出申請單，請靜待批准回覆信件')
+                            const now = new Date()
+                            localStorage.setItem('lastSend', now.toString())
 
-                            localStorage.setItem('coolDown', 'true')
-                            setTimeout(() => {
-                                localStorage.setItem('coolDown', 'false')
-                            }, 600000);
                         }, 
                         (err): void=>{
                             toast.error(err)
                         }
                     );
-
-                
            }
 
            watch(
@@ -260,7 +261,7 @@
 
 
             const reload = (): void=>{
-                const target: any = (document.getElementById('Calendar') as HTMLIFrameElement)
+                const target: HTMLIFrameElement = (document.getElementById('Calendar') as HTMLIFrameElement)
                 const nsrc = target.src
                 target.src = nsrc
             }
