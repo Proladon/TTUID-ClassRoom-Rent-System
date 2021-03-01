@@ -1,63 +1,86 @@
 <template>
-            <!-- {{today.getFullYear()}}-{{today.getMonth()}}-{{today.getDate()}} -->
-            <br>
         <div id="home">
             <div class="rent-calssroom-form">
+                <div class="form-input-container">
+                    <div class="input-wrapper">
+                        <p class="input-title">課程名稱</p>
+                        <input type="text" 
+                            v-model="formInputData.classes"
+                        >
+                    </div>
+
+                    <div class="input-wrapper">
+                        <p class="input-title">授課教師</p>
+                        <input type="text" 
+                            v-model="formInputData.teacher"
+                        >
+                    </div>
+
+                    <div class="input-wrapper">
+                        <p class="input-title">用途</p>
+                        <input type="text" 
+                            v-model="formInputData.description"
+                        >
+                    </div>
+
+                    <div class="input-wrapper">
+                        <p class="input-title">借用器材</p>
+                        <input type="text" 
+                            v-model="formInputData.toolsRent"
+                            placeholder="觸發器、打光燈、..."
+                        >
+                    </div>
+
+                    <div class="input-wrapper">
+                        <p class="input-title">借用人 Email</p>
+                        <input type="email" 
+                            v-model="formInputData.userMail" 
+                            id="input_email"
+                            placeholder="user@gmail.com" 
+                        >
+                    </div>
+                </div>
+
+                <div class="input-wrapper">
+                    <div class="form-input-container">
+                            <input class="user-name" type="text"  v-model="formInputData.applyUser.name" placeholder="借用人">
+                            <input class="class-number" type="text" v-model="formInputData.applyUser.classNum" placeholder="班級座號">
+                            <input class="student-id" type="text" v-model="formInputData.applyUser.studentID" placeholder="學號">
+                            <input class="phone" type="text" v-model="formInputData.applyUser.phone" placeholder="電話">
+                    </div>
+                    <div class="form-input-container">
+                            <input class="user-name" type="text" v-model="formInputData.agentUser.name" placeholder="代理人">
+                            <input class="class-number" type="text" v-model="formInputData.agentUser.classNum" placeholder="班級座號">
+                            <input class="student-id" type="text" v-model="formInputData.agentUser.studentID" placeholder="學號">
+                            <input class="phone" type="text" v-model="formInputData.agentUser.phone" placeholder="電話">
+                    </div>
+                    
+                    <hr>
+                    <ArrayInput v-model:formInputData="formInputData" />
+                </div>
                 
                 <div class="input-wrapper">
-                    <p class="input-title">班級</p>
-                    <input type="text"
-                        v-model="formInputData.classes"
-                    >
-                </div>
-                
-                <div class="input-wrapper">
-                    <p class="input-title">申請人</p>
-                    <input type="text" 
-                        v-model="formInputData.userName" 
-                        placeholder="申請人"
-                    >
-                </div>
-
-                <div class="input-wrapper">
-                    <p class="input-title">Email</p>
-                    <input type="email" 
-                        v-model="formInputData.userMail" 
-                        id="input_email"
-                        placeholder="user@gmail.com" 
-                    >
-                </div>
-
-                <div class="input-wrapper">
-                    <p class="input-title">用途</p>
-                    <input type="text" 
-                        v-model="formInputData.description"
-                    >
-                </div>
-
-                <div class="input-wrapper">
-                    <p class="input-title">欲租借日期 <span>⚠</span> </p> 
+                    <p class="input-title">欲借用日期</p> 
                     <input type="date"
                         id="input_rentDate"
                         v-model="formInputData.rentDate"
                         @change="checkDate($event)"
                     >
-                </div>
+                    <p id="warn-p">註: 只能借用未來3周內的時間</p>
 
-                <div class="input-wrapper">
-                    <p class="input-title">租借時段</p>
+                    <p class="input-title">借用時段</p>
                     <div class="time-period-select" @click="selectPeriod($event)">
                         <div class="time-period" v-for="(period, index) in timePeriod" :key="period" :id="`time-${index}`">{{period}}</div>
                     </div>
                 </div>
                 
-                <div class="submit-btn" @click="submit"><b>提交申請</b></div>
+                <div class="btn submit-btn" @click="submit"><b>提交申請</b></div>
             </div>
 
         </div>
 
         <div class="info-btn-wrapper">
-            <div class="info-btn info" @click="reload"><b>🔄 重整日曆</b></div>
+            <div class="btn info-btn info" @click="reload"><b>🔄 重整日曆</b></div>
         </div>
 
         <iframe src="https://calendar.google.com/calendar/embed?src=proladon%40gmail.com&ctz=Asia%2FTaipei"
@@ -75,27 +98,46 @@
    import{ init } from 'emailjs-com';
    import date from 'date-and-time';
    import {formValidation} from '../validation/form_validation'
+   import ArrayInput from '../components/ArrayInput.vue'
 
 
    export default defineComponent({
        name: 'Home',
+       components:{ArrayInput},
        setup(){
 
            init("user_x0clkplkmDu3SDcl9sqEC");
            const toast = useToast()
            const timePeriod = reactive<Array<string>>([
-               '08:00 ~ 12:00', 
-               '12:00 ~ 14:00', 
-               '14:00 ~ 16:00'
+               '08:10 ~ 11:30', 
+               '13:00 ~ 16:30', 
+               '17:00 ~ 22:00',
+               '全天'
            ])
 
            const formInputData = reactive({
                classes: '',
-               userName: '',
+               teacher: '',
+               description: '',
+               toolsRent: '',
+
                userMail: '',
+               applyUser: {
+                   name: '',
+                   classNum: '',
+                   studentID: '',
+                   phone: ''
+               },
+
+               agentUser:{
+                   name: '',
+                   classNum: '',
+                   studentID: '',
+                   phone: ''
+               },
+               classMate:[],
                applyDate: date.format(new Date(), 'YYYY-MM-DD'),
                rentDate: '',
-               description: '',
                TimePeriod: '',
            })
 
@@ -116,10 +158,10 @@
             const checkDate = (e: Event): void =>{
                 const rentDate = new Date((e.target as HTMLInputElement).value)
                 const today = new Date(formInputData.applyDate)
-                const sub = date.subtract(today, rentDate).toDays()
+                const sub = date.subtract(rentDate, today).toDays()
                 const target = (document.getElementById('input_rentDate') as HTMLInputElement)
-                
-                if (sub < 21){
+                console.log(sub)
+                if (sub<= 0 || sub > 21){
                     target.classList.add('input-invalid')
                 }
                 else{
@@ -130,11 +172,13 @@
 
 
            const submit = async ()=>{
-               console.table(formInputData)
+            //    console.table(formInputData)
+               console.log(formInputData)
                
                try {
                    const validation = await formValidation.validate(formInputData)
                    if(validation.error){
+                       console.log(validation)
                        toast.error(validation.error.toString())
                        return
                    }
@@ -154,17 +198,19 @@
                 if (inputInvalid) return
             
                 //send email
+                // todo: cooldown
+                // emailjs.send('service_7u32gvo','template_sr5lks2', formInputData)
+                //     .then(
+                //         (response): void=>{
+                //             console.log('SUCCESS!', response.status);
+                //             toast.success('submit')
+                //         }, 
+                //         (err): void=>{
+                //             toast.error(err)
+                //         }
+                //     );
+
                 
-                emailjs.send('service_7u32gvo','template_sr5lks2', formInputData)
-                    .then(
-                        (response): void=>{
-                            console.log('SUCCESS!', response.status);
-                            toast.success('submit')
-                        }, 
-                        (err): void=>{
-                            toast.error(err)
-                        }
-                    );
            }
 
            watch(
@@ -219,7 +265,6 @@
 @mixin btn($color){
     cursor: pointer;
     color: rgb(85, 85, 85);
-    margin-top: 10px;
     padding: 5px;
     border-radius: 5px;
     background-color: $color;
@@ -249,7 +294,7 @@ iframe{
 
     .input-title{
         text-align: left;
-        margin: 1px;
+        margin-bottom: 5px;
     }
 
     .input-note{
@@ -258,27 +303,13 @@ iframe{
         color: grey;
         font-size: 12px;
     }
+}
 
-    input{
-        display: block;
-        border-radius: 5px;
-        border: none;
-        outline: none;
-        // outline-color: rgb(58, 70, 75);
-        padding: 5px;
-
-        &:focus{
-            background-color: rgb(193, 240, 255);
-        }
-    }
-
-    .input-wrapper{
-        margin-bottom: 10px;
-    }
+.form-input-container{
+    flex-wrap: wrap;
 }
 
 .time-period{
-    width: 100%;
     @include btn(rgb(170, 170, 170));
 }
 
@@ -286,20 +317,18 @@ iframe{
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 2px;
-}
-
-.submit-btn{
-    width: 100%;
-    @include btn(rgb(168, 226, 121));
+    gap: 5px;
 }
 
 .selected{
     background-color: rgb(161, 238, 255);
 }
 
-.input-invalid{
-    // outline: none !important;
-    background-color:  rgb(250, 85, 129) !important;
+#warn-p{
+    text-align: left;
+    font-size: 12px;
+    color:  rgb(250, 85, 129) !important;
 }
+
+
 </style>

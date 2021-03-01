@@ -1,0 +1,112 @@
+p{
+    margin: 0;
+}
+input{
+    height: 20px;
+    display: block;
+    outline: none;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    border: none;
+
+    &:focus{
+        background-color: rgb(193, 240, 255);
+    }
+}
+
+.user-name{
+    width: 15%;
+    // width: auto;
+}
+
+.phone{
+    width: auto;
+}
+
+.class-number, .student-id{
+    width: 20%;
+    // width: auto;
+}
+
+
+
+
+@mixin btn($color){
+    cursor: pointer;
+    color: rgb(85, 85, 85);
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: $color;
+}
+
+/* Button */
+.btn{
+    cursor: pointer;
+    height: 20px;
+    color: rgb(85, 85, 85);
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.info-btn{
+    background: rgb(240, 200, 126);
+    box-shadow: 5px 5px 10px 1px rgb(38, 38, 38);
+}
+
+.submit-btn{
+    width: 100%;
+    background: rgb(168, 226, 121);
+}
+
+.add-new-btn{
+    background: rgb(140, 189, 192);
+}
+
+.delete-btn{
+    margin: 0;
+    color: rgb(45, 56, 72);
+    background: rgb(223, 112, 151);
+}
+
+/* Container */
+
+.form-input-container{
+    display: flex;
+    // flex-wrap: wrap;
+    // justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.input-wrapper{
+    margin-bottom: 10px;
+}
+
+.input-invalid{
+    background-color:  rgb(250, 85, 129) !important;
+}
+
+@media screen and (max-width: 740px){
+    .form-input-container{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 2px;
+        margin-bottom: 20px;
+    }
+
+    .input-wrapper{
+        margin-bottom: 0;
+    }
+    
+    .user-name{
+        width: auto;
+    }
+    
+    .class-number, .student-id{
+        width: auto;
+    }
+}

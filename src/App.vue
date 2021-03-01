@@ -6,8 +6,8 @@
     <p>TTUID Online ClassRoom Renting Form</p>
 
     <div class="info-btn-wrapper">
-        <div class="info-btn info" @click="showRules = !showRules"><b>🔰 規定及事項</b></div>
-        <div class="info-btn rules" @click="showInfo = !showInfo"><b>❔ 關於</b></div>
+        <div class="btn info-btn info" @click="showRules = !showRules"><b>🔰 規定及事項</b></div>
+        <div class="btn info-btn rules" @click="showInfo = !showInfo"><b>❔ 關於</b></div>
     </div>
 
     <vue-final-modal v-model="showRules">
@@ -21,6 +21,11 @@
             <span>請於三個禮拜前申請借用</span>
             <br>
             <span>例如: 欲於10/31借用攝影棚，請於10/10前申請</span>
+            <br>
+            <p><strong>▪ 申請日期</strong></p>
+            <span>
+                同時段每位使用同學姓名及電話都須填寫於借用單上，借用單第一順位為該時段第一負責人；每人每日限借用 1 時段 (1 週限 3 時段)，請把握借用時間。
+            </span>
         </div>
     </vue-final-modal>
 
@@ -68,14 +73,7 @@ export default defineComponent({
 
 <style lang="scss">
 
-@mixin btn($color){
-    cursor: pointer;
-    color: rgb(85, 85, 85);
-    margin-top: 10px;
-    padding: 5px;
-    border-radius: 5px;
-    background-color: $color;
-}
+
 
 html,body,#app{
     width: 100%;
@@ -94,15 +92,9 @@ html,body,#app{
 }
 
 .info-btn-wrapper{
-    
     display: flex;
     justify-content: center;
     gap: 10px;
-
-    .info-btn{
-        @include btn(rgb(240, 200, 126));
-        box-shadow: 5px 5px 10px 1px rgb(38, 38, 38);
-    }
 }
 
 .app-title{
