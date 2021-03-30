@@ -1,99 +1,104 @@
 <template>
-        <div id="home">
-            <div class="rent-calssroom-form">
-                <div class="form-input-container">
-                    <div class="input-wrapper">
-                        <p class="input-title">課程名稱</p>
-                        <input type="text" 
-                            v-model="formInputData.classes"
-                        >
-                    </div>
 
-                    <div class="input-wrapper">
-                        <p class="input-title">授課教師</p>
-                        <input type="text" 
-                            v-model="formInputData.teacher"
-                        >
-                    </div>
-
-                    <div class="input-wrapper">
-                        <p class="input-title">用途</p>
-                        <input type="text" 
-                            v-model="formInputData.description"
-                        >
-                    </div>
-
-                    <div class="input-wrapper">
-                        <p class="input-title">借用器材</p>
-                        <input type="text" 
-                            v-model="formInputData.toolsRent"
-                            placeholder="觸發器、打光燈、..."
-                        >
-                    </div>
-
-                    <div class="input-wrapper">
-                        <p class="input-title">借用人 Email</p>
-                        <input type="email" 
-                            v-model="formInputData.userMail" 
-                            id="input_email"
-                            placeholder="user@gmail.com" 
-                        >
-                    </div>
-                </div>
-
-                <div class="input-wrapper">
+        <div class="page-container" :class="{horizontal : horizontal}">
+            <div id="home">
+                <div class="rent-calssroom-form">
                     <div class="form-input-container">
-                            <input class="user-name" type="text"  v-model="formInputData.applyUser.name" placeholder="借用人">
-                            <input class="class-number" type="text" v-model="formInputData.applyUser.classNum" placeholder="班級座號">
-                            <input class="student-id" type="text" v-model="formInputData.applyUser.studentID" placeholder="學號">
-                            <input class="phone" type="text" v-model="formInputData.applyUser.phone" placeholder="電話">
+                        <div class="input-wrapper">
+                            <p class="input-title">課程名稱</p>
+                            <input type="text" 
+                                v-model="formInputData.classes"
+                            >
+                        </div>
+
+                        <div class="input-wrapper">
+                            <p class="input-title">授課教師</p>
+                            <input type="text" 
+                                v-model="formInputData.teacher"
+                            >
+                        </div>
+
+                        <div class="input-wrapper">
+                            <p class="input-title">用途</p>
+                            <input type="text" 
+                                v-model="formInputData.description"
+                            >
+                        </div>
+
+                        <div class="input-wrapper">
+                            <p class="input-title">借用器材</p>
+                            <input type="text" 
+                                v-model="formInputData.toolsRent"
+                                placeholder="觸發器、打光燈、..."
+                            >
+                        </div>
+
+                        <div class="input-wrapper">
+                            <p class="input-title">借用人 Email</p>
+                            <input type="email" 
+                                v-model="formInputData.userMail" 
+                                id="input_email"
+                                placeholder="user@gmail.com" 
+                            >
+                        </div>
                     </div>
-                    <div class="form-input-container">
-                            <input class="user-name" type="text" v-model="formInputData.agentUser.name" placeholder="代理人">
-                            <input class="class-number" type="text" v-model="formInputData.agentUser.classNum" placeholder="班級座號">
-                            <input class="student-id" type="text" v-model="formInputData.agentUser.studentID" placeholder="學號">
-                            <input class="phone" type="text" v-model="formInputData.agentUser.phone" placeholder="電話">
+
+                    <div class="input-wrapper">
+                        <div class="form-input-container">
+                                <input class="user-name" type="text"  v-model="formInputData.applyUser.name" placeholder="借用人">
+                                <input class="class-number" type="text" v-model="formInputData.applyUser.classNum" placeholder="班級座號">
+                                <input class="student-id" type="text" v-model="formInputData.applyUser.studentID" placeholder="學號">
+                                <input class="phone" type="text" v-model="formInputData.applyUser.phone" placeholder="電話">
+                        </div>
+                        <div class="form-input-container">
+                                <input class="user-name" type="text" v-model="formInputData.agentUser.name" placeholder="代理人">
+                                <input class="class-number" type="text" v-model="formInputData.agentUser.classNum" placeholder="班級座號">
+                                <input class="student-id" type="text" v-model="formInputData.agentUser.studentID" placeholder="學號">
+                                <input class="phone" type="text" v-model="formInputData.agentUser.phone" placeholder="電話">
+                        </div>
+                        
+                        <hr>
+                        <ArrayInput v-model:formInputData="formInputData" />
                     </div>
                     
-                    <hr>
-                    <ArrayInput v-model:formInputData="formInputData" />
-                </div>
-                
-                <div class="input-wrapper">
-                    <p class="input-title">欲借用日期</p> 
-                    <input type="date"
-                        id="input_rentDate"
-                        v-model="formInputData.rentDate"
-                        @change="checkDate($event)"
-                    >
-                    <p id="warn-p">註: 只能借用未來3周內的時間</p>
+                    <div class="input-wrapper">
+                        <p class="input-title">欲借用日期</p> 
+                        <input type="date"
+                            id="input_rentDate"
+                            v-model="formInputData.rentDate"
+                            @change="checkDate($event)"
+                        >
+                        <p id="warn-p">註: 只能借用未來3周內的時間</p>
 
-                    <p class="input-title">借用時段 (可複選)</p>
-                    <div class="time-period-select" @click="selectPeriod($event)">
-                        <div class="time-period" v-for="(period, index) in timePeriod" :key="period" :id="`time-${index}`">{{period}}</div>
+                        <p class="input-title">借用時段 (可複選)</p>
+                        <div class="time-period-select" @click="selectPeriod($event)">
+                            <div class="time-period" v-for="(period, index) in timePeriod" :key="period" :id="`time-${index}`">{{period}}</div>
+                        </div>
                     </div>
+                    
+                    <div class="btn submit-btn" @click="submit"><b>提交申請</b></div>
                 </div>
-                
-                <div class="btn submit-btn" @click="submit"><b>提交申請</b></div>
             </div>
 
+            <div class="calendar-container">
+                <div class="info-btn-wrapper">
+                    <div class="btn info-btn info" @click="reload"><b>🔄 重整日曆</b></div>
+                </div>
+
+                <iframe src="https://calendar.google.com/calendar/embed?src=gm.ttu.edu.tw_8o871m4gfckf3o49nlhkv5cpdk%40group.calendar.google.com&ctz=Asia%2FTaipei" 
+                    id="Calendar"
+                    style="border: none" width="800" height="600" frameborder="0" scrolling="yes">
+                </iframe>
+            </div>
         </div>
 
-        <div class="info-btn-wrapper">
-            <div class="btn info-btn info" @click="reload"><b>🔄 重整日曆</b></div>
-        </div>
-
-        <iframe src="https://calendar.google.com/calendar/embed?src=gm.ttu.edu.tw_8o871m4gfckf3o49nlhkv5cpdk%40group.calendar.google.com&ctz=Asia%2FTaipei" 
-            id="Calendar"
-            style="border: none" width="800" height="600" frameborder="0" scrolling="yes">
-        </iframe>
 
 
 </template>
 
 <script lang="ts">
    import {watch, defineComponent, reactive} from 'vue'
-   import Joi from 'joi'
+   import Joi, { boolean } from 'joi'
    import { useToast } from "vue-toastification"
    import emailjs from 'emailjs-com'
    import{ init } from 'emailjs-com';
@@ -105,7 +110,12 @@
    export default defineComponent({
        name: 'Home',
        components:{ArrayInput},
-       setup(){
+       props:{
+           horizontal:{
+               type: boolean
+           }
+       },
+       setup(props){
             
             // emailjs.com
            init("user_WjYj4YxrXX5vvj4wlw4nv");
@@ -318,10 +328,14 @@
 }
 
 iframe{
-    width: 80%;
+    width: 90%;
     margin-bottom: 50px;
     border-radius: 5px;
     margin-top: 10px;
+}
+
+.horizontal{
+    display: flex;
 }
 
 .rent-calssroom-form{
@@ -351,6 +365,10 @@ iframe{
     flex-wrap: wrap;
 }
 
+.calendar-container{
+    width: 100%;
+}
+
 .time-period{
     @include btn(rgb(170, 170, 170));
 }
@@ -370,6 +388,13 @@ iframe{
     text-align: left;
     font-size: 12px;
     color:  rgb(250, 85, 129) !important;
+}
+
+
+@media screen and(max-width: 740px) {
+    iframe{
+        width: 80% !important;
+    }    
 }
 
 

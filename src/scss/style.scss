@@ -53,11 +53,17 @@ input{
 /* Button */
 .btn{
     cursor: pointer;
+    user-select: none;
     height: 20px;
     color: rgb(85, 85, 85);
     margin-top: 10px;
     padding: 5px;
     border-radius: 5px;
+}
+
+.func-btn{
+    background: rgb(126, 204, 240);
+    box-shadow: 5px 5px 10px 1px rgb(38, 38, 38);
 }
 
 .info-btn{
