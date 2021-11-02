@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*":["./src/*"]
+    },
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
@@ -10,5 +14,6 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"]
   },
+  
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
