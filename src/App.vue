@@ -1,9 +1,17 @@
 <template>
-  <Navbar />
-  <router-view class="viewer" />
+  <n-config-provider :theme-overrides="theme1">
+    <n-theme-editor>
+      <Navbar class="app-spacing" />
+      <router-view class="main-view app-spacing" />
+      <n-button>TEST</n-button>
+    </n-theme-editor>
+  </n-config-provider>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { NConfigProvider, NButton, darkTheme, NThemeEditor } from 'naive-ui'
+import theme1 from '@/theme/theme1.ts'
+</script>
 
 <style lang="postcss">
 html,
@@ -23,7 +31,11 @@ body {
   background: url('@/assets/bg.jpg'); */
 }
 
-.viewer {
-  @apply max-w-[1400px] m-auto py-[50px] px-[40px];
+.app-spacing {
+  @apply max-w-[1480px] px-[40px] m-auto;
+}
+
+.main-view {
+  @apply py-[50px];
 }
 </style>

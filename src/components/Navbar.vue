@@ -15,10 +15,10 @@
 
 <style lang="postcss" scoped>
 .navbar {
-  @apply bg-[#c5baaf];
+  @apply bg-[#42f796];
 }
 .nav-wrapper {
-  @apply relative  flex items-center h-[50px] max-w-[1400px] m-auto px-[40px];
+  @apply relative flex items-center h-[50px];
 }
 
 .app-title {

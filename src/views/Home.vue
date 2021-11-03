@@ -16,7 +16,6 @@
 }
 .block-container {
   @apply bg-[#c5baaf] p-5 rounded-xl bg-opacity-30 shadow-xl;
-  backdrop-filter: blur(20px);
   transition: 1s;
 }
 </style>
