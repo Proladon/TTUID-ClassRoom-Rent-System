@@ -183,6 +183,11 @@
   dependencies:
     "@types/yargs-parser" "*"
 
+"@vicons/ionicons5@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@vicons/ionicons5/-/ionicons5-0.11.0.tgz#54185bfa572a09df70094db1954f28bfbf1363ed"
+  integrity sha512-4IWamqtXUsuCdlW6NQc2xyoJ+PUXGMwzSrppQbdVCYg0pjYld89jOfLOIkuTWq8o2XUa+Q1/78jzWBtXMTojNg==
+
 "@vitejs/plugin-vue@1.9.4":
   version "1.9.4"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-1.9.4.tgz#4f48485432cbb986a9fb9d254dc33ce30ddccbfa"

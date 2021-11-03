@@ -15,7 +15,8 @@
 
 <style lang="postcss" scoped>
 .navbar {
-  @apply bg-[#42f796];
+  /* @apply bg-[#42f796]; */
+  @apply bg-[#c5baaf];
 }
 .nav-wrapper {
   @apply relative flex items-center h-[50px];

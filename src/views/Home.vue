@@ -7,7 +7,9 @@
   </main>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { NButton } from 'naive-ui'
+</script>
 
 <style scoped lang="postcss">
 .home {
