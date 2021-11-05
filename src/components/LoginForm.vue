@@ -1,18 +1,34 @@
 <template>
   <NForm :model="formData" :rules="formRules" ref="formRef">
-    <NFormItem label="電子信箱" path="class">
-      <NInput placeholder="請輸入" />
+    <NFormItem label="電子信箱" path="email">
+      <NInput placeholder="請輸入" v-model:value="formData.email" />
     </NFormItem>
-    <NFormItem label="密碼" path="teacher">
-      <NInput placeholder="請輸入" />
+    <NFormItem label="密碼" path="password">
+      <NInput
+        type="password"
+        show-password-on="click"
+        placeholder="請輸入"
+        v-model:value="formData.password"
+      />
     </NFormItem>
+
+    <NButton class="signin-btn" block type="primary" @click="signin"
+      >登入</NButton
+    >
   </NForm>
 </template>
 
 <script setup lang="ts">
+import { useMessage } from 'naive-ui'
 import { reactive, ref } from '@vue/runtime-core'
-import { NForm, NFormItem, NInput } from 'naive-ui'
+import { NForm, NFormItem, NInput, NButton } from 'naive-ui'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { authStatus } from '@/config/auth'
+import dayjs from 'dayjs'
+import ls from 'local-storage'
 
+const fireAuth = getAuth()
+const message = useMessage()
 const formRef = ref(null)
 const formData = reactive({
   email: '',
@@ -28,6 +44,40 @@ const formRules = {
     trigger: 'blur',
   },
 }
+
+const authAccount = async () => {
+  try {
+    const res = await signInWithEmailAndPassword(
+      fireAuth,
+      formData.email,
+      formData.password
+    )
+    message.success('登入成功')
+    return res
+  } catch (error) {
+    message.error(authStatus[error.code])
+  }
+}
+
+const saveUser = (user) => {
+  ls.set('user', {
+    name: user,
+    uid: user.uid,
+    exp: dayjs(new Date()).add(1, 'd').unix(),
+  })
+}
+
+const signin = async () => {
+  formRef.value.validate(async (errors) => {
+    if (errors) return
+    const authRes = await authAccount()
+    if (authRes) saveUser(authRes.user)
+  })
+}
 </script>
 
-<style lang="postcss" scoped></style>
+<style lang="postcss" scoped>
+.signin-btn {
+  @apply mt-[30px];
+}
+</style>
