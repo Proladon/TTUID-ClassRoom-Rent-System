@@ -1,0 +1,80 @@
+<template>
+  <div class="date-period">
+    <NDatePicker
+      class="w-full"
+      :is-date-disabled="dateDisabled"
+      placeholder="選擇借用日期"
+      :on-update:value="selectDate"
+    />
+
+    <div class="period-group">
+      <NButton
+        class="w-full"
+        :type="selectedPeriods.includes(1) ? 'primary' : ''"
+        @click="pushPeriod(1)"
+        >08:10 ~ 11:30</NButton
+      >
+      <NButton
+        class="w-full"
+        :type="selectedPeriods.includes(2) ? 'primary' : ''"
+        @click="pushPeriod(2)"
+        >13:00 ~ 16:30</NButton
+      >
+      <NButton
+        class="w-full"
+        :type="selectedPeriods.includes(3) ? 'primary' : ''"
+        @click="pushPeriod(3)"
+        >17:00 ~ 22:00</NButton
+      >
+      <NButton
+        class="w-full"
+        :type="selectedPeriods.includes(0) ? 'primary' : ''"
+        @click="pushPeriod(0)"
+        >全天</NButton
+      >
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { findIndex } from 'lodash-es'
+import { NButton, NDatePicker } from 'naive-ui'
+import { ref } from '@vue/runtime-core'
+
+const emit = defineEmits(['date', 'period'])
+const selectedPeriods = ref<number[]>([])
+
+const pushPeriod = (key: number) => {
+  if (key === 0) {
+    selectedPeriods.value = [0]
+    emit('period', selectedPeriods.value)
+    return
+  }
+  const exist = findIndex(selectedPeriods.value, (period) => period === key)
+  if (exist >= 0) selectedPeriods.value.splice(exist, 1)
+  if (exist < 0) selectedPeriods.value.push(key)
+
+  const allDay = findIndex(selectedPeriods.value, (period) => period === 0)
+  if (allDay >= 0) selectedPeriods.value.splice(allDay, 1)
+  emit('period', selectedPeriods.value)
+}
+
+const selectDate = (date: number) => {
+  emit('date', date)
+}
+
+const dateDisabled = (ts) => {
+  // TODO 禁用日期
+  const date = new Date(ts).getDate()
+  return date < 15
+}
+</script>
+
+<style lang="postcss" scoped>
+.date-period {
+  @apply grid w-full;
+}
+.period-group {
+  @apply grid grid-cols-2 gap-2 pt-[10px];
+}
+</style>

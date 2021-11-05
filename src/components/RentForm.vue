@@ -6,17 +6,9 @@
     :show-feedback="false"
     :show-require-mark="false"
   >
-    <NFormItem label="欲借用日期">
-      <NDatePicker
-        :is-date-disabled="dateDisabled"
-        placeholder="選擇借用日期"
-      />
+    <NFormItem label="欲借用日期" path="date">
+      <DatePeriod @date="updateDate" @period="updatePeriod" />
     </NFormItem>
-
-    <NButton>08:10 ~ 11:30</NButton>
-    <NButton>13:00 ~ 16:30</NButton>
-    <NButton>17:00 ~ 22:00</NButton>
-    <NButton>全天</NButton>
 
     <NDivider />
 
@@ -40,7 +32,7 @@
     <div class="grid gap-5">
       <!-- 借用人 -->
       <NFormItem label="借用人">
-        <div class="w-full flex justify-between gap-2">
+        <div class="user-input-container">
           <NFormItem path="renter" :show-label="false">
             <NInput placeholder="姓名" v-model:value="formData.renter" />
           </NFormItem>
@@ -130,7 +122,7 @@
           />
         </NFormItem>
       </div>
-      <NButton class="ml-2" type="error" ghost>
+      <NButton class="ml-2" type="error" ghost @click="removeMate(index)">
         <template #icon>
           <NIcon>
             <Close />
@@ -139,7 +131,14 @@
       </NButton>
     </NFormItem>
 
-    <NButton dashed block class="mt-5" type="primary" @click="addClassMate">
+    <NButton
+      v-if="formData.classMate.length < 10"
+      dashed
+      block
+      class="mt-5"
+      type="primary"
+      @click="addClassMate"
+    >
       <template #icon>
         <NIcon>
           <Add />
@@ -149,7 +148,7 @@
     >
   </NForm>
   <NDivider />
-  <NButton type="primary" block>送出申請</NButton>
+  <NButton type="primary" block @click="submit">送出申請</NButton>
 </template>
 
 <script setup lang="ts">
@@ -164,10 +163,15 @@ import {
   NIcon,
   NDatePicker,
 } from 'naive-ui'
+import { periodConfig } from '@/config/period'
 import rentFormRules from '@/static/rentFormRules'
+import { findIndex } from 'lodash-es'
+import DatePeriod from './DatePeriod.vue'
 
+const selectedPeriods = ref<number[]>([])
 const formRef = ref(null)
 const formData = reactive({
+  date: null,
   class: '',
   teacher: '',
   purpose: '',
@@ -196,10 +200,21 @@ const addClassMate = () => {
   })
 }
 
-const dateDisabled = (ts) => {
-  // TODO 禁用日期
-  const date = new Date(ts).getDate()
-  return date < 15
+const removeMate = (index: number) => {
+  formData.classMate.splice(index, 1)
+}
+
+const updateDate = (date: number) => {
+  formData.date = date
+}
+const updatePeriod = (period: number[]) => {
+  selectedPeriods.value = period
+}
+
+const submit = () => {
+  formRef.value.validate((errors) => {
+    console.log(errors)
+  })
 }
 </script>
 

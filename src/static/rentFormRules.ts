@@ -1,4 +1,9 @@
 export default {
+  date: {
+    required: true,
+    type: 'number',
+    trigger: 'blur',
+  },
   class: {
     required: true,
     trigger: 'blur',
@@ -28,6 +33,11 @@ export default {
     required: true,
     trigger: 'blur',
   },
+  renterPhone: {
+    required: true,
+    trigger: 'blur',
+  },
+
   agent: {
     required: true,
     trigger: 'blur',
@@ -37,6 +47,10 @@ export default {
     trigger: 'blur',
   },
   agentNo: {
+    required: true,
+    trigger: 'blur',
+  },
+  agentPhone: {
     required: true,
     trigger: 'blur',
   },

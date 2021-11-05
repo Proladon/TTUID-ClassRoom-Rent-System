@@ -4,6 +4,7 @@
       <!-- <n-theme-editor> -->
       <Navbar class="app-spacing" />
       <router-view class="main-view app-spacing" />
+      <Footer />
 
       <!-- </n-theme-editor> -->
     </NMessageProvider>
