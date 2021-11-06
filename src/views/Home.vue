@@ -1,43 +1,57 @@
 <template>
   <main class="home">
     <section id="calendar-wrapper" class="block-container">
-      <iframe
-        class="w-full h-full rounded-md min-h-[500px]"
-        :src="config.gCalendar"
-        frameborder="0"
-      ></iframe>
+      <NSpin :show="!loaded" class="w-full h-full rounded-md">
+        <iframe
+          v-if="config"
+          class="w-full h-full rounded-md min-h-[500px]"
+          :src="config.gCalendar"
+          frameborder="0"
+          @load="loaded = true"
+        ></iframe>
+      </NSpin>
     </section>
     <section id="form-wrapper" class="block-container">
-      <RentForm @submit="sendEmail" />
+      <NSpin :show="sending">
+        <RentForm @submit="sendEmail" />
+      </NSpin>
     </section>
   </main>
 </template>
 
 <script setup lang="ts">
-import { NButton, useMessage } from 'naive-ui'
-import emailjs from 'emailjs-com'
-import { getDoc, doc } from 'firebase/firestore'
-import { db } from '@/firebase'
-import { computed, onMounted } from '@vue/runtime-core'
+import { useMessage, NSpin } from 'naive-ui'
+import { send } from 'emailjs-com'
+import { computed, onMounted, ref } from '@vue/runtime-core'
 import { useStore } from 'vuex'
+import dayjs from 'dayjs'
+import ls from 'local-storage'
 
 const store = useStore()
 const config = computed(() => store.state.config)
+const loaded = ref(false)
 const message = useMessage()
-const sendEmail = async (formData: object) => {
-  console.log(formData)
+const sending = ref(false)
 
+const sendEmail = async (formData: object) => {
+  sending.value = true
   try {
-    const res = await emailjs.send(
+    await send(
       config.value.serviceID,
       config.value.templateID,
       formData,
       config.value.mailjsUserID
     )
-    console.log(res)
-    message.success('已寄出申請')
+    message.success('已成功寄出申請 !')
+    sending.value = false
+    ls.set('cd', dayjs(new Date()).add(10, 'm').unix())
+    setTimeout(() => {
+      location.reload()
+    }, 1000)
   } catch (error) {
+    message.error(`${error}\n 請聯繫管理員`)
     console.log(error)
+    sending.value = false
   }
 }
 
@@ -45,8 +59,11 @@ onMounted(async () => {})
 </script>
 
 <style scoped lang="postcss">
+::v-deep .n-spin-content {
+  @apply h-full;
+}
 .home {
-  @apply grid grid-cols-2 gap-5 max-w-[1400px] m-auto;
+  @apply grid grid-cols-2 gap-5;
   @apply <tablet: grid-cols-1;
 }
 .block-container {

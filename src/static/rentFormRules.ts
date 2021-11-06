@@ -68,7 +68,6 @@ export const dynamicInputRule = {
   trigger: 'input',
   validator(rule, value) {
     if (!value.length) return new Error('')
-    if (value.length >= 5) return new Error('')
     return true
   },
 }

@@ -7,7 +7,11 @@
     :show-require-mark="false"
   >
     <NFormItem label="欲借用日期" path="rentDate">
-      <DatePeriod @date="updateDate" @period="updatePeriod" />
+      <DatePeriod
+        @date="updateDate"
+        @period="updatePeriod"
+        :periodErr="periodErr"
+      />
     </NFormItem>
 
     <NDivider />
@@ -167,7 +171,12 @@
   </NForm>
 
   <NDivider />
-  <NButton type="primary" block @click="submitForm" class="h-[50px]"
+  <NButton
+    type="primary"
+    block
+    @click="submitForm"
+    class="h-[50px]"
+    :disabled="cd > 0"
     >送出申請</NButton
   >
 </template>
@@ -181,16 +190,21 @@ import {
   NButton,
   NIcon,
   NDatePicker,
+  useMessage,
 } from 'naive-ui'
-import { reactive, ref } from '@vue/runtime-core'
+import { onMounted, reactive, ref } from '@vue/runtime-core'
 import { Add, Close } from '@vicons/ionicons5'
 import { periodConfig } from '@/config/period'
 import rentFormRules, { dynamicInputRule } from '@/static/rentFormRules'
 import { findIndex, map } from 'lodash-es'
 import dayjs from 'dayjs'
+import ls from 'local-storage'
 
 const emit = defineEmits(['submit'])
+const message = useMessage()
 // --- Data ---
+const cd = ref(0)
+const periodErr = ref(false)
 const selectedPeriods = ref<number[]>([])
 const formRef = ref(null)
 const formRules = rentFormRules
@@ -227,11 +241,9 @@ const addClassMate = () => {
     phone: '',
   })
 }
-
 const removeMate = (index: number) => {
   formData.classMate.splice(index, 1)
 }
-
 const updateDate = (date: number) => {
   formData.rentDate = date
 }
@@ -239,12 +251,17 @@ const updatePeriod = (period: number[]) => {
   selectedPeriods.value = period
 }
 
+// => 預處理送出資料
 const dataPreprocess = () => {
   formData.rentDate = dayjs(formData.rentDate).format('YYYY-MM-DD')
   formData.applyDate = dayjs(new Date()).format('YYYY-MM-DD')
 
+  const list = []
   formData.classMate.forEach((user: any) => {
-    formData.classMateString += `【姓名: ${user.name} | 班級座號: ${user.classNo} | 學號: ${user.id} | 電話: ${user.phone}】  ||  `
+    list.push(
+      `【姓名: ${user.name} | 班級座號: ${user.classNo} | 學號: ${user.id} | 電話: ${user.phone}】`
+    )
+    formData.classMateString = list.join('  ||  ')
   })
   formData.periods = map(
     selectedPeriods.value,
@@ -252,13 +269,25 @@ const dataPreprocess = () => {
   ).join('、')
 }
 
+// => 檢查表單與送出資料
 const submitForm = () => {
   formRef.value.validate((errors) => {
     if (errors) return
+    if (!selectedPeriods.value.length) {
+      periodErr.value = true
+      message.warning('請選擇借用時段')
+      return
+    }
+
     dataPreprocess()
     emit('submit', formData)
   })
 }
+
+onMounted(() => {
+  const cd = ls.get('cd')
+  if (cd) console.log(cd)
+})
 </script>
 
 <style lang="postcss" scoped>
