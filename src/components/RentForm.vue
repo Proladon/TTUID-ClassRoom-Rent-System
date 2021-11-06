@@ -6,7 +6,7 @@
     :show-feedback="false"
     :show-require-mark="false"
   >
-    <NFormItem label="欲借用日期" path="date">
+    <NFormItem label="欲借用日期" path="rentDate">
       <DatePeriod @date="updateDate" @period="updatePeriod" />
     </NFormItem>
 
@@ -42,8 +42,8 @@
               v-model:value="formData.renterClassNo"
             />
           </NFormItem>
-          <NFormItem path="renterNo" :show-label="false">
-            <NInput placeholder="學號" v-model:value="formData.renterNo" />
+          <NFormItem path="renterID" :show-label="false">
+            <NInput placeholder="學號" v-model:value="formData.renterID" />
           </NFormItem>
           <NFormItem path="renterPhone" :show-label="false">
             <NInput placeholder="電話" v-model:value="formData.renterPhone" />
@@ -63,8 +63,8 @@
               v-model:value="formData.agentClassNo"
             />
           </NFormItem>
-          <NFormItem path="agentNo" :show-label="false">
-            <NInput placeholder="學號" v-model:value="formData.agentNo" />
+          <NFormItem path="agentID" :show-label="false">
+            <NInput placeholder="學號" v-model:value="formData.agentID" />
           </NFormItem>
           <NFormItem path="agentPhone" :show-label="false">
             <NInput placeholder="電話" v-model:value="formData.agentPhone" />
@@ -150,14 +150,18 @@
       </template>
       新增共同使用人</NButton
     >
+
+    <NDivider />
+    <NFormItem label="借用人信箱" path="renterEmail">
+      <NInput placeholder="電子信箱" v-model:value="formData.renterEmail" />
+    </NFormItem>
   </NForm>
+
   <NDivider />
-  <NButton type="primary" block @click="submit">送出申請</NButton>
+  <NButton type="primary" block @click="submitForm">送出申請</NButton>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from '@vue/runtime-core'
-import { Add, Close } from '@vicons/ionicons5'
 import {
   NForm,
   NFormItem,
@@ -167,15 +171,21 @@ import {
   NIcon,
   NDatePicker,
 } from 'naive-ui'
+import { reactive, ref } from '@vue/runtime-core'
+import { Add, Close } from '@vicons/ionicons5'
 import { periodConfig } from '@/config/period'
-import rentFormRules from '@/static/rentFormRules'
-import { findIndex } from 'lodash-es'
-import DatePeriod from './DatePeriod.vue'
+import rentFormRules, { dynamicInputRule } from '@/static/rentFormRules'
+import { findIndex, map } from 'lodash-es'
+import dayjs from 'dayjs'
 
+const emit = defineEmits(['submit'])
+// --- Data ---
 const selectedPeriods = ref<number[]>([])
 const formRef = ref(null)
+const formRules = rentFormRules
 const formData = reactive({
-  date: null,
+  applyDate: null,
+  rentDate: null,
   class: '',
   teacher: '',
   purpose: '',
@@ -183,23 +193,26 @@ const formData = reactive({
 
   renter: '',
   renterClassNo: '',
-  renterNo: '',
+  renterID: '',
   renterPhone: '',
+  renterEmail: '',
   agent: '',
   agentClassNo: '',
-  agentNo: '',
+  agentID: '',
   agentPhone: '',
 
   classMate: [],
+  classMateString: '',
+  periods: [],
 })
-const formRules = rentFormRules
 
+// --- Methods ---
 const addClassMate = () => {
   if (formData.classMate.length === 10) return
   formData.classMate.push({
     name: '',
     classNo: '',
-    no: '',
+    id: '',
     phone: '',
   })
 }
@@ -209,26 +222,31 @@ const removeMate = (index: number) => {
 }
 
 const updateDate = (date: number) => {
-  formData.date = date
+  formData.rentDate = date
 }
 const updatePeriod = (period: number[]) => {
   selectedPeriods.value = period
 }
 
-const submit = () => {
-  formRef.value.validate((errors) => {
-    if (errors) return console.log(errors)
-    alert('done')
+const dataPreprocess = () => {
+  formData.rentDate = dayjs(formData.rentDate).format('YYYY-MM-DD')
+  formData.applyDate = dayjs(new Date()).format('YYYY-MM-DD')
+
+  formData.classMate.forEach((user: any) => {
+    formData.classMateString += `【姓名: ${user.name} | 班級座號: ${user.classNo} | 學號: ${user.id} | 電話: ${user.phone}】  ||  `
   })
+  formData.periods = map(
+    selectedPeriods.value,
+    (period) => periodConfig[period]
+  ).join('、')
 }
 
-const dynamicInputRule = {
-  trigger: 'input',
-  validator(rule, value) {
-    if (!value.length) return new Error('')
-    if (value.length >= 5) return new Error('')
-    return true
-  },
+const submitForm = () => {
+  formRef.value.validate((errors) => {
+    if (errors) return
+    dataPreprocess()
+    emit('submit', formData)
+  })
 }
 </script>
 

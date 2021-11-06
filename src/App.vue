@@ -19,12 +19,19 @@ import {
   darkTheme,
   NMessageProvider,
 } from 'naive-ui'
-import { db } from '@/firebase'
 import theme1 from '@/theme/theme1'
-import { onMounted } from '@vue/runtime-core'
+import { computed, onMounted } from '@vue/runtime-core'
+import { useStore } from 'vuex'
+import { getDoc, doc } from 'firebase/firestore'
+import { db } from '@/firebase'
 
-onMounted(() => {
-  console.log(db)
+const store = useStore()
+
+onMounted(async () => {
+  // const configRef = await getDoc(doc(db, 'App', 'config'))
+  // const config = configRef.data()
+  // store.commit('SET_CONFIG', config)
+  store.commit('SET_DB', db)
 })
 </script>
 
