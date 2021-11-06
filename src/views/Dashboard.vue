@@ -1,6 +1,5 @@
 <template>
   <div class="dashbaord">
-    <h1>Dashboard</h1>
     <NForm ref="formRef" :model="formData" :rules="formRules">
       <NFormItem label="Google 月曆嵌入網址" path="gCalendar">
         <NInput v-model:value="formData.gCalendar" />
@@ -23,7 +22,10 @@
       </NFormItem>
     </NForm>
 
-    <Editor @update="editing" />
+    <section>
+      <p class="text-left mb-[5px]">規定及注意事項</p>
+      <Editor @update="editing" />
+    </section>
 
     <div class="text-right mt-[30px]">
       <NButton type="primary" @click="updateConfig">儲存設定</NButton>
@@ -48,9 +50,8 @@ const formData = reactive({
   mailjsUserID: '',
   serviceID: '',
   templateID: '',
-  rules: '',
-
   pdfFormLink: '',
+  rules: '',
 })
 const formRules = dashboardFormRules
 
@@ -107,6 +108,7 @@ onMounted(async () => {
 h1 {
   @apply text-[48px] mb-[50px];
 }
+
 .dashbaord {
   @apply text-light-800 max-w-[800px];
 }

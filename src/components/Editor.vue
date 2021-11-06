@@ -1,6 +1,5 @@
 <template>
   <div id="editor" ref="editor"></div>
-  <div @click="test">sadfasd</div>
 </template>
 
 <script setup lang="ts">
@@ -14,10 +13,6 @@ const editor = ref(null)
 const quill = ref(null)
 
 const config = computed(() => store.state.config)
-
-const test = () => {
-  console.log(quill.value.root.innerHTML)
-}
 
 onMounted(() => {
   quill.value = new Quill('#editor', {
@@ -36,5 +31,9 @@ onMounted(() => {
 @import url('https://cdn.quilljs.com/1.3.6/quill.snow.css');
 .ql-toolbar {
   @apply !bg-[#63e2b7];
+}
+
+.ql-editor {
+  @apply !bg-gray-300 text-dark-50;
 }
 </style>

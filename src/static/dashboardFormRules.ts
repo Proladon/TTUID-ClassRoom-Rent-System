@@ -15,4 +15,8 @@ export default {
     required: true,
     trigger: 'blur',
   },
+  pdfFormLink: {
+    required: true,
+    trigger: 'blur',
+  },
 }
