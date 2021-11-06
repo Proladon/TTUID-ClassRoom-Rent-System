@@ -7,7 +7,10 @@
       :on-update:value="selectDate"
     />
 
-    <div class="period-group">
+    <div
+      class="period-group"
+      :class="{ error: periodErr && !selectedPeriods.length }"
+    >
       <NButton
         class="w-full"
         :type="selectedPeriods.includes(1) ? 'primary' : ''"
@@ -42,6 +45,9 @@ import { NButton, NDatePicker } from 'naive-ui'
 import { ref } from '@vue/runtime-core'
 
 const emit = defineEmits(['date', 'period'])
+defineProps({
+  periodErr: Boolean,
+})
 const selectedPeriods = ref<number[]>([])
 
 const pushPeriod = (key: number) => {
@@ -75,6 +81,10 @@ const dateDisabled = (ts) => {
   @apply grid w-full;
 }
 .period-group {
-  @apply grid grid-cols-2 gap-2 pt-[10px];
+  @apply grid grid-cols-2 gap-2 mt-[10px];
+}
+
+.error {
+  @apply border-1 border-[#e88080] border-solid;
 }
 </style>
