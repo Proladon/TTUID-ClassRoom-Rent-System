@@ -27,7 +27,9 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { authStatus } from '@/config/auth'
 import dayjs from 'dayjs'
 import ls from 'local-storage'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const fireAuth = getAuth()
 const message = useMessage()
 const formRef = ref(null)
@@ -59,7 +61,9 @@ const authAccount = async () => {
         formData.password
       )
       message.success('登入成功')
-      return res
+      console.log(res)
+      saveUser(res.user)
+      router.push({ name: 'Dashboard' })
     } catch (error) {
       message.error(authStatus[error.code])
     }
@@ -77,8 +81,7 @@ const saveUser = (user) => {
 const signin = async () => {
   formRef.value.validate(async (errors) => {
     if (errors) return
-    const authRes = await authAccount()
-    if (authRes) saveUser(authRes.user)
+    await authAccount()
   })
 }
 </script>
