@@ -14,6 +14,6 @@ export default defineConfig({
     alias: [{ find: '@', replacement: resolve(__dirname, 'src') }],
   },
   define: {
-    process: {},
+    'process.env': {},
   },
 })
