@@ -83,8 +83,9 @@
       <div class="user-input-container">
         <NFormItem
           ignore-path-change
-          :path="`formData.classMate[${index}].name`"
+          :path="`classMate[${index}].name`"
           :show-label="false"
+          :rule="dynamicInputRule"
         >
           <NInput
             placeholder="共同使用人"
@@ -93,8 +94,9 @@
         </NFormItem>
         <NFormItem
           ignore-path-change
-          :path="`formData.classMate[${index}].classNo`"
+          :path="`classMate[${index}].classNo`"
           :show-label="false"
+          :rule="dynamicInputRule"
         >
           <NInput
             placeholder="班級座號"
@@ -103,8 +105,9 @@
         </NFormItem>
         <NFormItem
           ignore-path-change
-          :path="`formData.classMate[${index}].no`"
+          :path="`classMate[${index}].no`"
           :show-label="false"
+          :rule="dynamicInputRule"
         >
           <NInput
             placeholder="學號"
@@ -113,8 +116,9 @@
         </NFormItem>
         <NFormItem
           ignore-path-change
-          :path="`formData.classMate[${index}].phone`"
+          :path="`classMate[${index}].phone`"
           :show-label="false"
+          :rule="dynamicInputRule"
         >
           <NInput
             placeholder="電話"
@@ -213,8 +217,18 @@ const updatePeriod = (period: number[]) => {
 
 const submit = () => {
   formRef.value.validate((errors) => {
-    console.log(errors)
+    if (errors) return console.log(errors)
+    alert('done')
   })
+}
+
+const dynamicInputRule = {
+  trigger: 'input',
+  validator(rule, value) {
+    if (!value.length) return new Error('')
+    if (value.length >= 5) return new Error('')
+    return true
+  },
 }
 </script>
 
