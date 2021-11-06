@@ -1,6 +1,12 @@
 <template>
   <main class="home">
-    <section id="calendar-wrapper" class="block-container"></section>
+    <section id="calendar-wrapper" class="block-container">
+      <iframe
+        class="w-full h-full rounded-md min-h-[500px]"
+        :src="config.gCalendar"
+        frameborder="0"
+      ></iframe>
+    </section>
     <section id="form-wrapper" class="block-container">
       <RentForm @submit="sendEmail" />
     </section>
@@ -8,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { NButton } from 'naive-ui'
+import { NButton, useMessage } from 'naive-ui'
 import emailjs from 'emailjs-com'
 import { getDoc, doc } from 'firebase/firestore'
 import { db } from '@/firebase'
@@ -17,18 +23,22 @@ import { useStore } from 'vuex'
 
 const store = useStore()
 const config = computed(() => store.state.config)
-
+const message = useMessage()
 const sendEmail = async (formData: object) => {
   console.log(formData)
 
-  // const configRef = await getDoc(doc(db, 'App', 'config'))
-  // const config = configRef.data()
-  // try {
-  //   const res= await emailjs.send(config.value.serviceID, config.value.templateID, data, config.value.mailjsUserID)
-  //   console.log(res)
-  // } catch (error) {
-  //   console.log(error)
-  // }
+  try {
+    const res = await emailjs.send(
+      config.value.serviceID,
+      config.value.templateID,
+      formData,
+      config.value.mailjsUserID
+    )
+    console.log(res)
+    message.success('已寄出申請')
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 onMounted(async () => {})
