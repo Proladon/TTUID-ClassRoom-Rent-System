@@ -28,9 +28,9 @@ import { db } from '@/firebase'
 const store = useStore()
 
 onMounted(async () => {
-  // const configRef = await getDoc(doc(db, 'App', 'config'))
-  // const config = configRef.data()
-  // store.commit('SET_CONFIG', config)
+  const configRef = await getDoc(doc(db, 'App', 'config'))
+  const config = configRef.data()
+  store.commit('SET_CONFIG', config)
   store.commit('SET_DB', db)
 })
 </script>

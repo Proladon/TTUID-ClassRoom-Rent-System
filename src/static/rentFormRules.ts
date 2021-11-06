@@ -1,3 +1,4 @@
+import { emailCheck, phoneCheck } from '@/validation/validator'
 export default {
   rentDate: {
     required: true,
@@ -36,10 +37,12 @@ export default {
   renterPhone: {
     required: true,
     trigger: 'blur',
+    validator: phoneCheck,
   },
   renterEmail: {
     required: true,
     trigger: 'blur',
+    validator: emailCheck,
   },
 
   agent: {
@@ -57,6 +60,7 @@ export default {
   agentPhone: {
     required: true,
     trigger: 'blur',
+    validator: phoneCheck,
   },
 }
 

@@ -5,3 +5,7 @@ export const emailCheck = (rule, value) => {
     )
   return res
 }
+
+export const phoneCheck = (rule, value) => {
+  return /^09\d{8}$/.test(value)
+}

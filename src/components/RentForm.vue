@@ -46,7 +46,11 @@
             <NInput placeholder="學號" v-model:value="formData.renterID" />
           </NFormItem>
           <NFormItem path="renterPhone" :show-label="false">
-            <NInput placeholder="電話" v-model:value="formData.renterPhone" />
+            <NInput
+              placeholder="電話"
+              maxlength="10"
+              v-model:value="formData.renterPhone"
+            />
           </NFormItem>
         </div>
       </NFormItem>
@@ -67,7 +71,11 @@
             <NInput placeholder="學號" v-model:value="formData.agentID" />
           </NFormItem>
           <NFormItem path="agentPhone" :show-label="false">
-            <NInput placeholder="電話" v-model:value="formData.agentPhone" />
+            <NInput
+              placeholder="電話"
+              maxlength="10"
+              v-model:value="formData.agentPhone"
+            />
           </NFormItem>
         </div>
       </NFormItem>
@@ -121,6 +129,7 @@
           :rule="dynamicInputRule"
         >
           <NInput
+            maxlength="10"
             placeholder="電話"
             v-model:value="formData.classMate[index].phone"
           />
@@ -158,7 +167,9 @@
   </NForm>
 
   <NDivider />
-  <NButton type="primary" block @click="submitForm">送出申請</NButton>
+  <NButton type="primary" block @click="submitForm" class="h-[50px]"
+    >送出申請</NButton
+  >
 </template>
 
 <script setup lang="ts">
