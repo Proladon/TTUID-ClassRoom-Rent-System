@@ -21,7 +21,8 @@
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
 import { reactive, ref } from '@vue/runtime-core'
-import { NForm, NFormItem, NInput, NButton } from 'naive-ui'
+import { NForm, NFormItem, NInput, NButton, FormRules } from 'naive-ui'
+import { emailCheck } from '@/validation/validator'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { authStatus } from '@/config/auth'
 import dayjs from 'dayjs'
@@ -34,29 +35,35 @@ const formData = reactive({
   email: '',
   password: '',
 })
-const formRules = {
+const formRules: FormRules = {
   email: {
     required: true,
     trigger: 'blur',
+    message: '請輸入正確電子信箱',
+    validator: emailCheck,
   },
   password: {
     required: true,
+    message: '請輸入正確密碼',
     trigger: 'blur',
   },
 }
 
 const authAccount = async () => {
-  try {
-    const res = await signInWithEmailAndPassword(
-      fireAuth,
-      formData.email,
-      formData.password
-    )
-    message.success('登入成功')
-    return res
-  } catch (error) {
-    message.error(authStatus[error.code])
-  }
+  formRef.value.validate(async (errors) => {
+    if (errors) return
+    try {
+      const res = await signInWithEmailAndPassword(
+        fireAuth,
+        formData.email,
+        formData.password
+      )
+      message.success('登入成功')
+      return res
+    } catch (error) {
+      message.error(authStatus[error.code])
+    }
+  })
 }
 
 const saveUser = (user) => {

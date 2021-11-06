@@ -1,5 +1,5 @@
 export default {
-  date: {
+  rentDate: {
     required: true,
     type: 'number',
     trigger: 'blur',
@@ -29,11 +29,15 @@ export default {
     required: true,
     trigger: 'blur',
   },
-  renterNo: {
+  renterID: {
     required: true,
     trigger: 'blur',
   },
   renterPhone: {
+    required: true,
+    trigger: 'blur',
+  },
+  renterEmail: {
     required: true,
     trigger: 'blur',
   },
@@ -46,12 +50,21 @@ export default {
     required: true,
     trigger: 'blur',
   },
-  agentNo: {
+  agentID: {
     required: true,
     trigger: 'blur',
   },
   agentPhone: {
     required: true,
     trigger: 'blur',
+  },
+}
+
+export const dynamicInputRule = {
+  trigger: 'input',
+  validator(rule, value) {
+    if (!value.length) return new Error('')
+    if (value.length >= 5) return new Error('')
+    return true
   },
 }
