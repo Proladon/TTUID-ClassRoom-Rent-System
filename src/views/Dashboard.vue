@@ -17,9 +17,15 @@
       <NFormItem label="EmailJS - Template ID" path="templateID">
         <NInput v-model:value="formData.templateID" />
       </NFormItem>
+
+      <NFormItem label="紙本表單連結" path="pdfFormLink">
+        <NInput v-model:value="formData.pdfFormLink" />
+      </NFormItem>
     </NForm>
 
-    <div class="text-right">
+    <Editor @update="editing" />
+
+    <div class="text-right mt-[30px]">
       <NButton type="primary" @click="updateConfig">儲存設定</NButton>
     </div>
   </div>
@@ -42,10 +48,17 @@ const formData = reactive({
   mailjsUserID: '',
   serviceID: '',
   templateID: '',
+  rules: '',
+
+  pdfFormLink: '',
 })
 const formRules = dashboardFormRules
 
 const config = computed(() => store.state.config)
+
+const editing = (html: string) => {
+  formData.rules = html
+}
 
 const updateConfig = async () => {
   formRef.value.validate(async (errors) => {
@@ -81,6 +94,8 @@ const syncConfig = () => {
   formData.mailjsUserID = clone(config.value.mailjsUserID)
   formData.serviceID = clone(config.value.serviceID)
   formData.templateID = clone(config.value.templateID)
+  formData.rules = clone(config.value.rules)
+  formData.pdfFormLink = clone(config.value.pdfFormLink)
 }
 
 onMounted(async () => {

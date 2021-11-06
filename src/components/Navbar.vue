@@ -3,20 +3,20 @@
     <div class="nav-wrapper">
       <section>
         <router-link to="/">
-          <NButton type="primary" ghost> 首頁 </NButton>
+          <NButton type="primary" ghost> 填寫申請表單 </NButton>
         </router-link>
       </section>
 
       <section class="grid grid-flow-col gap-4">
-        <router-link to="/">
+        <router-link to="/rules">
           <NButton>🔰 規定及注意事項</NButton>
         </router-link>
 
-        <router-link to="/">
+        <a :href="config.pdfFormLink" target="_blank">
           <NButton>📄 紙本表單</NButton>
-        </router-link>
+        </a>
 
-        <router-link to="/">
+        <router-link to="/about">
           <NButton>❔ 關於</NButton>
         </router-link>
       </section>
@@ -47,8 +47,9 @@ import { db } from '@/firebase'
 import { doc, query, getDocs, where, collection } from 'firebase/firestore'
 import { useStore } from 'vuex'
 
-const signin = computed(() => store.state.signin)
 const store = useStore()
+const signin = computed(() => store.state.signin)
+const config = computed(() => store.state.config)
 
 const signout = () => {
   ls.remove('user')
