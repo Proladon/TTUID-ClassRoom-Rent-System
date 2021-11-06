@@ -6,6 +6,6 @@
 
 <style lang="postcss" scoped>
 .app-footer {
-  @apply text-light-800;
+  @apply text-light-800 py-5;
 }
 </style>
