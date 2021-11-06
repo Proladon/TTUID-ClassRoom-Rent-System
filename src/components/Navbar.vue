@@ -82,7 +82,7 @@ const router = useRouter()
 const signin = computed(() => store.state.signin)
 const config = computed(() => store.state.config)
 
-const active = ref(true)
+const active = ref(false)
 
 const signout = () => {
   ls.remove('user')
