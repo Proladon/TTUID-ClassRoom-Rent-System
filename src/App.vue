@@ -2,7 +2,9 @@
   <n-config-provider :theme-overrides="theme1" :theme="darkTheme" v-if="config">
     <NMessageProvider>
       <!-- <n-theme-editor> -->
-      <Navbar class="app-spacing" />
+      <div class="bg-gray-600">
+        <Navbar class="app-spacing" />
+      </div>
       <router-view class="main-view app-spacing" />
       <Footer />
 

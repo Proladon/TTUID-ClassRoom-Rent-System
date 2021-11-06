@@ -28,7 +28,9 @@ import { authStatus } from '@/config/auth'
 import dayjs from 'dayjs'
 import ls from 'local-storage'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
+const store = useStore()
 const router = useRouter()
 const fireAuth = getAuth()
 const message = useMessage()
@@ -63,6 +65,7 @@ const authAccount = async () => {
       message.success('登入成功')
       console.log(res)
       saveUser(res.user)
+      store.commit('SET_SIGNIN', true)
       router.push({ name: 'Dashboard' })
     } catch (error) {
       message.error(authStatus[error.code])
