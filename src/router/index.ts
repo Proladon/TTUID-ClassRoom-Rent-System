@@ -12,6 +12,21 @@ const routes: Array<RouteRecordRaw> = [
     name: 'AdminLogin',
     component: () => import('@/views/AdminLogin.vue'),
   },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('@/views/Dashboard.vue'),
+  },
+  {
+    path: '/rules',
+    name: 'Rules',
+    component: () => import('@/views/Rules.vue'),
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('@/views/About.vue'),
+  },
 ]
 
 const router = createRouter({

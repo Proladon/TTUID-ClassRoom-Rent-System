@@ -1,8 +1,10 @@
 <template>
-  <n-config-provider :theme-overrides="theme1" :theme="darkTheme">
+  <n-config-provider :theme-overrides="theme1" :theme="darkTheme" v-if="config">
     <NMessageProvider>
       <!-- <n-theme-editor> -->
-      <Navbar class="app-spacing" />
+      <div class="bg-gray-600">
+        <Navbar class="app-spacing" />
+      </div>
       <router-view class="main-view app-spacing" />
       <Footer />
 
@@ -26,6 +28,7 @@ import { getDoc, doc } from 'firebase/firestore'
 import { db } from '@/firebase'
 
 const store = useStore()
+const config = computed(() => store.state.config)
 
 onMounted(async () => {
   const configRef = await getDoc(doc(db, 'App', 'config'))
