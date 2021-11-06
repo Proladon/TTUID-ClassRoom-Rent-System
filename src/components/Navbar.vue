@@ -71,7 +71,7 @@
 import { Menu } from '@vicons/ionicons5'
 import { NButton, NDrawer, NDrawerContent, NIcon } from 'naive-ui'
 import { computed, onMounted, ref } from '@vue/runtime-core'
-import ls from 'local-storage'
+import * as ls from 'local-storage'
 import { db } from '@/firebase'
 import { query, getDocs, where, collection } from 'firebase/firestore'
 import { useStore } from 'vuex'
@@ -91,7 +91,7 @@ const signout = () => {
 }
 
 onMounted(async () => {
-  const user = ls.get('user')
+  const user: User = ls.get('user')
   if (!user) return
   const usersRef = query(collection(db, 'Users'), where('uid', '==', user.uid))
   const userQuery = await getDocs(usersRef)

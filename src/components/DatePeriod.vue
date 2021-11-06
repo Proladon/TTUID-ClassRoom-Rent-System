@@ -11,28 +11,16 @@
       class="period-group"
       :class="{ error: periodErr && !selectedPeriods.length }"
     >
-      <NButton
-        class="w-full"
-        :type="selectedPeriods.includes(1) ? 'primary' : ''"
-        @click="pushPeriod(1)"
+      <NButton class="w-full" :type="periodType(1)" @click="pushPeriod(1)"
         >08:10 ~ 11:30</NButton
       >
-      <NButton
-        class="w-full"
-        :type="selectedPeriods.includes(2) ? 'primary' : ''"
-        @click="pushPeriod(2)"
+      <NButton class="w-full" :type="periodType(2)" @click="pushPeriod(2)"
         >13:00 ~ 16:30</NButton
       >
-      <NButton
-        class="w-full"
-        :type="selectedPeriods.includes(3) ? 'primary' : ''"
-        @click="pushPeriod(3)"
+      <NButton class="w-full" :type="periodType(3)" @click="pushPeriod(3)"
         >17:00 ~ 22:00</NButton
       >
-      <NButton
-        class="w-full"
-        :type="selectedPeriods.includes(0) ? 'primary' : ''"
-        @click="pushPeriod(0)"
+      <NButton class="w-full" :type="periodType(0)" @click="pushPeriod(0)"
         >全天</NButton
       >
     </div>
@@ -69,10 +57,14 @@ const selectDate = (date: number) => {
   emit('date', date)
 }
 
-const dateDisabled = (ts) => {
+const periodType = (index: number): any => {
+  return selectedPeriods.value.includes(index) ? 'primary' : ''
+}
+
+const dateDisabled = (ts: any): any => {
   // TODO 禁用日期
   const date = new Date(ts).getDate()
-  return date < 15
+  return date
 }
 </script>
 

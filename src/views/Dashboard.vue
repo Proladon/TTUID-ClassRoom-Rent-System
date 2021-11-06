@@ -44,7 +44,7 @@ import dashboardFormRules from '@/static/dashboardFormRules'
 
 const store = useStore()
 const message = useMessage()
-const formRef = ref(null)
+const formRef = ref<any>(null)
 const formData = reactive({
   gCalendar: '',
   mailjsUserID: '',
@@ -62,7 +62,7 @@ const editing = (html: string) => {
 }
 
 const updateConfig = async () => {
-  formRef.value.validate(async (errors) => {
+  formRef.value.validate(async (errors: any) => {
     if (errors) return
     const configRef = doc(db, 'App', 'config')
     try {
@@ -71,7 +71,7 @@ const updateConfig = async () => {
       })
       message.success('更新成功 !')
       await refresh()
-    } catch (error) {
+    } catch (error: any) {
       console.log(error)
       message.error(error.code)
     }
@@ -85,7 +85,7 @@ const refresh = async () => {
     store.commit('SET_CONFIG', config)
     store.commit('SET_DB', db)
     syncConfig()
-  } catch (error) {
+  } catch (error: any) {
     message.error(error.code)
   }
 }

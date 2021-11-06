@@ -20,7 +20,7 @@
     <section class="intro">
       嗨嗨 (。・ω・。) <br />
       我是工設研究所畢業的綠茶 ~ <br />
-      現在是一為前端工程師
+      現在是一名 前端工程師
     </section>
   </div>
 </template>

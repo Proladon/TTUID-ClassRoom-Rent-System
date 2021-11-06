@@ -26,7 +26,7 @@ import { emailCheck } from '@/validation/validator'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { authStatus } from '@/config/auth'
 import dayjs from 'dayjs'
-import ls from 'local-storage'
+import * as ls from 'local-storage'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
@@ -34,7 +34,7 @@ const store = useStore()
 const router = useRouter()
 const fireAuth = getAuth()
 const message = useMessage()
-const formRef = ref(null)
+const formRef = ref<any>(null)
 const formData = reactive({
   email: '',
   password: '',
@@ -54,10 +54,10 @@ const formRules: FormRules = {
 }
 
 const authAccount = async () => {
-  formRef.value.validate(async (errors) => {
+  formRef.value.validate(async (errors: any) => {
     if (errors) return
     try {
-      const res = await signInWithEmailAndPassword(
+      const res: any = await signInWithEmailAndPassword(
         fireAuth,
         formData.email,
         formData.password
@@ -67,13 +67,14 @@ const authAccount = async () => {
       saveUser(res.user)
       store.commit('SET_SIGNIN', true)
       router.push({ name: 'Dashboard' })
-    } catch (error) {
-      message.error(authStatus[error.code])
+    } catch (error: any) {
+      const code: string = error.code
+      message.error(authStatus[code])
     }
   })
 }
 
-const saveUser = (user) => {
+const saveUser = (user: User) => {
   ls.set('user', {
     name: user,
     uid: user.uid,
@@ -82,7 +83,7 @@ const saveUser = (user) => {
 }
 
 const signin = async () => {
-  formRef.value.validate(async (errors) => {
+  formRef.value.validate(async (errors: any) => {
     if (errors) return
     await authAccount()
   })

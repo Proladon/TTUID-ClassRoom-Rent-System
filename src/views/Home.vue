@@ -25,7 +25,7 @@ import { send } from 'emailjs-com'
 import { computed, onMounted, ref } from '@vue/runtime-core'
 import { useStore } from 'vuex'
 import dayjs from 'dayjs'
-import ls from 'local-storage'
+import * as ls from 'local-storage'
 
 const store = useStore()
 const config = computed(() => store.state.config)
@@ -33,7 +33,7 @@ const loaded = ref(false)
 const message = useMessage()
 const sending = ref(false)
 
-const sendEmail = async (formData: object) => {
+const sendEmail = async (formData: any) => {
   sending.value = true
   try {
     await send(

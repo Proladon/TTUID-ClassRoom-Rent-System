@@ -66,7 +66,7 @@ export default {
 
 export const dynamicInputRule = {
   trigger: 'input',
-  validator(rule, value) {
+  validator(rule: any, value: any) {
     if (!value.length) return new Error('')
     return true
   },

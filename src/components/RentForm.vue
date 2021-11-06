@@ -117,13 +117,13 @@
         </NFormItem>
         <NFormItem
           ignore-path-change
-          :path="`classMate[${index}].no`"
+          :path="`classMate[${index}].id`"
           :show-label="false"
           :rule="dynamicInputRule"
         >
           <NInput
             placeholder="學號"
-            v-model:value="formData.classMate[index].no"
+            v-model:value="formData.classMate[index].id"
           />
         </NFormItem>
         <NFormItem
@@ -198,7 +198,7 @@ import { periodConfig } from '@/config/period'
 import rentFormRules, { dynamicInputRule } from '@/static/rentFormRules'
 import { findIndex, map } from 'lodash-es'
 import dayjs from 'dayjs'
-import ls from 'local-storage'
+import * as ls from 'local-storage'
 
 const emit = defineEmits(['submit'])
 const message = useMessage()
@@ -206,9 +206,9 @@ const message = useMessage()
 const cd = ref(0)
 const periodErr = ref(false)
 const selectedPeriods = ref<number[]>([])
-const formRef = ref(null)
-const formRules = rentFormRules
-const formData = reactive({
+const formRef = ref<any>(null)
+const formRules: any = rentFormRules
+const formData: RentForm = reactive({
   applyDate: null,
   rentDate: null,
   class: '',
@@ -256,7 +256,7 @@ const dataPreprocess = () => {
   formData.rentDate = dayjs(formData.rentDate).format('YYYY-MM-DD')
   formData.applyDate = dayjs(new Date()).format('YYYY-MM-DD')
 
-  const list = []
+  const list: string[] = []
   formData.classMate.forEach((user: any) => {
     list.push(
       `【姓名: ${user.name} | 班級座號: ${user.classNo} | 學號: ${user.id} | 電話: ${user.phone}】`
@@ -265,13 +265,13 @@ const dataPreprocess = () => {
   })
   formData.periods = map(
     selectedPeriods.value,
-    (period) => periodConfig[period]
+    (period: number): string => periodConfig[period]
   ).join('、')
 }
 
 // => 檢查表單與送出資料
 const submitForm = () => {
-  formRef.value.validate((errors) => {
+  formRef.value?.validate((errors: any) => {
     if (errors) return
     if (!selectedPeriods.value.length) {
       periodErr.value = true

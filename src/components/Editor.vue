@@ -9,8 +9,7 @@ import { useStore } from 'vuex'
 
 const store = useStore()
 const emit = defineEmits(['update'])
-const editor = ref(null)
-const quill = ref(null)
+const quill: any = ref(null)
 
 const config = computed(() => store.state.config)
 
