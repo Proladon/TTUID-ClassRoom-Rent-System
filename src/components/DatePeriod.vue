@@ -31,6 +31,7 @@
 import { findIndex } from 'lodash-es'
 import { NButton, NDatePicker } from 'naive-ui'
 import { ref } from '@vue/runtime-core'
+import dayjs from 'dayjs'
 
 const emit = defineEmits(['date', 'period'])
 defineProps({
@@ -61,10 +62,12 @@ const periodType = (index: number): any => {
   return selectedPeriods.value.includes(index) ? 'primary' : ''
 }
 
-const dateDisabled = (ts: any): any => {
-  // TODO 禁用日期
-  const date = new Date(ts).getDate()
-  return date
+const dateDisabled = (ts: number): boolean => {
+  const date = dayjs(new Date(ts))
+  const today = dayjs(new Date())
+  const end = today.add(21, 'd')
+
+  return !(date.isAfter(today) && date.isBefore(end))
 }
 </script>
 

@@ -175,7 +175,7 @@
     type="primary"
     block
     @click="submitForm"
-    class="h-[50px]"
+    class="h-[50px] !font-bold text-gray-600"
     :disabled="cd > 0"
     >送出申請</NButton
   >
@@ -189,14 +189,13 @@ import {
   NDivider,
   NButton,
   NIcon,
-  NDatePicker,
   useMessage,
 } from 'naive-ui'
 import { onMounted, reactive, ref } from '@vue/runtime-core'
 import { Add, Close } from '@vicons/ionicons5'
 import { periodConfig } from '@/config/period'
 import rentFormRules, { dynamicInputRule } from '@/static/rentFormRules'
-import { findIndex, map } from 'lodash-es'
+import { map } from 'lodash-es'
 import dayjs from 'dayjs'
 import * as ls from 'local-storage'
 

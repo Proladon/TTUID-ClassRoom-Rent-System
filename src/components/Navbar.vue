@@ -69,7 +69,7 @@
 
 <script setup lang="ts">
 import { Menu } from '@vicons/ionicons5'
-import { NButton, NDrawer, NDrawerContent, NIcon } from 'naive-ui'
+import { NButton, NDrawer, NDrawerContent, NIcon, useMessage } from 'naive-ui'
 import { computed, onMounted, ref } from '@vue/runtime-core'
 import * as ls from 'local-storage'
 import { db } from '@/firebase'
@@ -79,6 +79,7 @@ import { useRouter } from 'vue-router'
 
 const store = useStore()
 const router = useRouter()
+const message = useMessage()
 const signin = computed(() => store.state.signin)
 const config = computed(() => store.state.config)
 
@@ -87,13 +88,14 @@ const active = ref(false)
 const signout = () => {
   ls.remove('user')
   store.commit('SET_SIGNIN', false)
+  message.warning('已成功登出 !')
   router.push('/')
 }
 
 onMounted(async () => {
   const user: User = ls.get('user')
   if (!user) return
-  const usersRef = query(collection(db, 'Users'), where('uid', '==', user.uid))
+  const usersRef = query(collection(db, 'Admins'), where('uid', '==', user.uid))
   const userQuery = await getDocs(usersRef)
   if (userQuery.size) store.commit('SET_SIGNIN', true)
 })
@@ -101,8 +103,6 @@ onMounted(async () => {
 
 <style lang="postcss" scoped>
 .navbar {
-  /* @apply bg-[#42f796]; */
-  /* @apply bg-[#c5baaf]; */
   @apply py-2;
 }
 .nav-wrapper {

@@ -34,15 +34,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from '@vue/runtime-core'
+import { computed, onMounted, reactive, ref, watch } from '@vue/runtime-core'
 import { NButton, NInput, NForm, NFormItem, useMessage } from 'naive-ui'
 import { clone } from 'lodash-es'
 import { useStore } from 'vuex'
 import { doc, updateDoc, getDoc } from 'firebase/firestore'
 import { db } from '@/firebase'
 import dashboardFormRules from '@/static/dashboardFormRules'
+import { useRouter } from 'vue-router'
+import * as ls from 'local-storage'
 
 const store = useStore()
+const router = useRouter()
 const message = useMessage()
 const formRef = ref<any>(null)
 const formData = reactive({
@@ -56,6 +59,7 @@ const formData = reactive({
 const formRules = dashboardFormRules
 
 const config = computed(() => store.state.config)
+const signin = computed(() => store.state.signin)
 
 const editing = (html: string) => {
   formData.rules = html
@@ -99,7 +103,13 @@ const syncConfig = () => {
   formData.pdfFormLink = clone(config.value.pdfFormLink)
 }
 
+watch(signin, () => {
+  if (!signin.value) router.push('/')
+})
+
 onMounted(async () => {
+  const user: User = ls.get('user')
+  if (!user || !signin.value) router.push('/')
   await refresh()
 })
 </script>

@@ -16,7 +16,6 @@
 <script lang="ts" setup>
 import {
   NConfigProvider,
-  NButton,
   NThemeEditor,
   darkTheme,
   NMessageProvider,
@@ -26,6 +25,8 @@ import { computed, onMounted } from '@vue/runtime-core'
 import { useStore } from 'vuex'
 import { getDoc, doc } from 'firebase/firestore'
 import { db } from '@/firebase'
+import * as ls from 'local-storage'
+import dayjs from 'dayjs'
 
 const store = useStore()
 const config = computed(() => store.state.config)
@@ -35,6 +36,15 @@ onMounted(async () => {
   const config = configRef.data()
   store.commit('SET_CONFIG', config)
   store.commit('SET_DB', db)
+  const user: User = ls.get('user')
+  if (!user) return
+  const now = dayjs(new Date()).unix()
+  if (user.exp < now) {
+    ls.remove('user')
+    store.commit('SET_SIGNIN', false)
+  } else if (user.exp > now) {
+    store.commit('SET_SIGNIN', true)
+  }
 })
 </script>
 
@@ -51,10 +61,7 @@ body {
   text-align: center;
   color: #2c3e50;
 
-  @apply h-full w-full;
-  @apply bg-[#2c3e50];
-  /* @apply !bg-no-repeat bg-cover;
-  background: url('@/assets/bg.jpg'); */
+  @apply h-full w-full bg-[#2c3e50];
 }
 
 .app-spacing {

@@ -63,7 +63,6 @@ const authAccount = async () => {
         formData.password
       )
       message.success('登入成功')
-      console.log(res)
       saveUser(res.user)
       store.commit('SET_SIGNIN', true)
       router.push({ name: 'Dashboard' })
