@@ -5,7 +5,7 @@
       <div class="bg-gray-600">
         <Navbar class="app-spacing" v-if="departmentConfig" />
       </div>
-      <router-view class="main-view app-spacing" />
+      <router-view class="main-view app-spacing" v-if="departmentConfig || curPage === 'Home'"/>
       <Footer />
 
       <!-- </n-theme-editor> -->
@@ -28,11 +28,14 @@ import { useStore } from 'vuex'
 import { db } from '@/firebase'
 import * as ls from 'local-storage'
 import dayjs from 'dayjs'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getDepartment } from '@/utils/localstorage'
+
 const store = useStore()
 const router = useRouter()
+const route = useRoute()
 const departmentConfig = computed(() => store.state.configStore.config)
+const curPage = computed(() => route.name)
 
 
 onMounted(async () => {

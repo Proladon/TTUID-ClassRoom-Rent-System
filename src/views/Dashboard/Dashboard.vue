@@ -1,8 +1,12 @@
 <template>
-  <div class="dashbaord">
+  <div class="dashbaord" v-if="departmentConfig">
     <NForm ref="formRef" :model="formData" :rules="formRules">
       <NFormItem label="Google 月曆嵌入網址" path="gCalendar">
         <NInput v-model:value="formData.gCalendar" />
+      </NFormItem>
+
+      <NFormItem label="EmailJS" path="mailService">
+        <n-select v-model:value="formData.mailService" :options="emailJsSet" />
       </NFormItem>
 
       <NFormItem label="EmailJS - User ID" path="mailjsUserID">
@@ -36,14 +40,14 @@
 <script setup lang="ts">
 import RulesEditor from './components/RulesEditor.vue'
 import { computed, onMounted, reactive, ref, watch } from '@vue/runtime-core'
-import { NButton, NInput, NForm, NFormItem, useMessage } from 'naive-ui'
-import { clone } from 'lodash-es'
+import { NButton, NSelect, NInput, NForm, NFormItem, useMessage } from 'naive-ui'
+import { clone, map } from 'lodash-es'
 import { useStore } from 'vuex'
 import { doc, updateDoc, getDoc } from 'firebase/firestore'
 import { db } from '@/firebase'
 import dashboardFormRules from '@/static/dashboardFormRules'
 import { useRouter } from 'vue-router'
-import * as ls from 'local-storage'
+import { getDepartment } from '@/utils/localstorage'
 
 const store = useStore()
 const router = useRouter()
@@ -56,10 +60,17 @@ const formData = reactive({
   templateID: '',
   pdfFormLink: '',
   rules: '',
+  mailService: ''
 })
 const formRules = dashboardFormRules
 
-const config = computed(() => store.state.config)
+const departmentConfig = computed(() => store.state.configStore.config)
+const emailJsSet = computed(() => {
+  return map(departmentConfig.value.mailJsSet, (service) => ({
+    label: service.name,
+    value: service.name
+  }))
+})
 const signin = computed(() => store.state.signin)
 
 const editing = (html: string) => {
@@ -84,24 +95,19 @@ const updateConfig = async () => {
 }
 
 const refresh = async () => {
-  try {
-    const configRef = await getDoc(doc(db, 'App', 'config'))
-    const config = configRef.data()
-    store.commit('SET_CONFIG', config)
-    store.commit('SET_DB', db)
-    syncConfig()
-  } catch (error: any) {
-    message.error(error.code)
-  }
+  const department = getDepartment()
+  await store.dispatch('getDepartmentConfig', department)
+  syncConfig()
 }
 
 const syncConfig = () => {
-  formData.gCalendar = clone(config.value.gCalendar)
-  formData.mailjsUserID = clone(config.value.mailjsUserID)
-  formData.serviceID = clone(config.value.serviceID)
-  formData.templateID = clone(config.value.templateID)
-  formData.rules = clone(config.value.rules)
-  formData.pdfFormLink = clone(config.value.pdfFormLink)
+  formData.gCalendar = clone(departmentConfig.value.gCalendar)
+  formData.rules = clone(departmentConfig.value.rules)
+  formData.mailService = clone(departmentConfig.value.currentEmailjs?.name)
+  // formData.mailjsUserID = clone(config.value.mailjsUserID)
+  // formData.serviceID = clone(config.value.serviceID)
+  // formData.templateID = clone(config.value.templateID)
+  // formData.pdfFormLink = clone(config.value.pdfFormLink)
 }
 
 watch(signin, () => {
