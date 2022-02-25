@@ -1,73 +1,42 @@
 <template>
   <main class="home">
-    <section id="calendar-wrapper" class="block-container">
-      <NSpin :show="!loaded" class="w-full h-full rounded-md">
-        <iframe
-          v-if="config"
-          class="w-full h-full rounded-md min-h-[500px]"
-          :src="config.gCalendar"
-          frameborder="0"
-          @load="loaded = true"
-        ></iframe>
-      </NSpin>
-    </section>
-    <section id="form-wrapper" class="block-container">
-      <NSpin :show="sending">
-        <RentForm @submit="sendEmail" />
-      </NSpin>
-    </section>
+    <n-alert 
+      v-for="department in deparments" 
+      :key="department.code" 
+      @click="selectDepartment(department.code)"
+    >
+      {{ department.name }}
+    </n-alert>
   </main>
 </template>
 
 <script setup lang="ts">
-import { useMessage, NSpin } from 'naive-ui'
-import { send } from 'emailjs-com'
-import { computed, onMounted, ref } from '@vue/runtime-core'
+import { NAlert } from 'naive-ui'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import dayjs from 'dayjs'
-import * as ls from 'local-storage'
 
 const store = useStore()
-const config = computed(() => store.state.config)
-const loaded = ref(false)
-const message = useMessage()
-const sending = ref(false)
+const router = useRouter()
 
-const sendEmail = async (formData: any) => {
-  sending.value = true
-  try {
-    await send(
-      config.value.serviceID,
-      config.value.templateID,
-      formData,
-      config.value.mailjsUserID
-    )
-    message.success('已成功寄出申請 !')
-    sending.value = false
-    ls.set('cd', dayjs(new Date()).add(10, 'm').unix())
-    setTimeout(() => {
-      location.reload()
-    }, 1000)
-  } catch (error) {
-    message.error(`${error}\n 請聯繫管理員`)
-    console.log(error)
-    sending.value = false
+const deparments = [
+  {
+    name: '工業設計系',
+    code: 'IndustrialDesign',
+  },
+  {
+    name: '機械系',
+    code: 'MechanicalEngineering'
   }
-}
+]
 
-onMounted(async () => {})
+const selectDepartment = async(department: string) => {
+  store.commit('SET_DEPARTMENT', department)
+  // => 取得當前部門設定檔
+  await store.dispatch('getDepartmentConfig', department)
+  router.push({ name: 'RenttingForm' })
+}
 </script>
 
 <style scoped lang="postcss">
-::v-deep .n-spin-content {
-  @apply h-full;
-}
-.home {
-  @apply grid grid-cols-2 gap-5;
-  @apply <tablet: grid-cols-1;
-}
-.block-container {
-  @apply bg-[#c5baaf] p-5 rounded-xl bg-opacity-30 shadow-xl;
-  transition: 1s;
-}
+
 </style>

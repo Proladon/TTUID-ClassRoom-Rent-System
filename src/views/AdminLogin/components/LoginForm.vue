@@ -23,17 +23,17 @@ import { useMessage } from 'naive-ui'
 import { reactive, ref } from '@vue/runtime-core'
 import { NForm, NFormItem, NInput, NButton, FormRules } from 'naive-ui'
 import { emailCheck } from '@/validation/validator'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { authStatus } from '@/config/auth'
-import dayjs from 'dayjs'
-import * as ls from 'local-storage'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { saveUser } from '@/utils/localstorage'
 
+// --- Use ---
 const store = useStore()
 const router = useRouter()
-const fireAuth = getAuth()
 const message = useMessage()
+
+// --- Data ---
 const formRef = ref<any>(null)
 const formData = reactive({
   email: '',
@@ -53,32 +53,17 @@ const formRules: FormRules = {
   },
 }
 
+// --- Methods ---
 const authAccount = async () => {
-  formRef.value.validate(async (errors: any) => {
-    if (errors) return
-    try {
-      const res: any = await signInWithEmailAndPassword(
-        fireAuth,
-        formData.email,
-        formData.password
-      )
-      message.success('登入成功')
-      saveUser(res.user)
-      store.commit('SET_SIGNIN', true)
-      router.push({ name: 'Dashboard' })
-    } catch (error: any) {
-      const code: string = error.code
-      message.error(authStatus[code])
-    }
+  const [user, errCode] = await store.dispatch('adminLogin', {
+    email: formData.email,
+    password: formData.password,
   })
-}
-
-const saveUser = (user: User) => {
-  ls.set('user', {
-    name: user,
-    uid: user.uid,
-    exp: dayjs(new Date()).add(1, 'd').unix(),
-  })
+  if(errCode) return message.error(authStatus[errCode])
+  if(user) {
+    saveUser(user)
+    router.push({name: 'Dashboard'})
+  }
 }
 
 const signin = async () => {

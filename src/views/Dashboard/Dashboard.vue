@@ -24,7 +24,7 @@
 
     <section>
       <p class="text-left mb-[5px]">規定及注意事項</p>
-      <Editor @update="editing" />
+      <RulesEditor @update="editing" />
     </section>
 
     <div class="text-right mt-[30px]">
@@ -34,6 +34,7 @@
 </template>
 
 <script setup lang="ts">
+import RulesEditor from './components/RulesEditor.vue'
 import { computed, onMounted, reactive, ref, watch } from '@vue/runtime-core'
 import { NButton, NInput, NForm, NFormItem, useMessage } from 'naive-ui'
 import { clone } from 'lodash-es'
@@ -104,12 +105,12 @@ const syncConfig = () => {
 }
 
 watch(signin, () => {
-  if (!signin.value) router.push('/')
+  // if (!signin.value) router.push('/')
 })
 
 onMounted(async () => {
-  const user: User = ls.get('user')
-  if (!user || !signin.value) router.push('/')
+  // const user: User = ls.get('user')
+  // if (!user || !signin.value) router.push('/')
   await refresh()
 })
 </script>

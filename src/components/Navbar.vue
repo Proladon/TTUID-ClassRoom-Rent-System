@@ -12,9 +12,9 @@
           <NButton>🔰 規定及注意事項</NButton>
         </router-link>
 
-        <a :href="config.pdfFormLink" target="_blank">
+        <!-- <a :href="config.pdfFormLink" target="_blank">
           <NButton>📄 紙本表單</NButton>
-        </a>
+        </a> -->
 
         <router-link to="/about">
           <NButton>❔ 關於</NButton>

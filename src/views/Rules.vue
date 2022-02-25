@@ -1,31 +1,23 @@
 <template>
   <div class="rules markdown-body">
-    <div v-html="rulesContent"></div>
+    <div v-if="departmentConfig" v-html="cleanHtml()"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from '@vue/runtime-core'
+import { computed } from '@vue/runtime-core'
 import sanitizeHtml from 'sanitize-html'
 import { useStore } from 'vuex'
 
 const store = useStore()
-const config = computed(() => store.state.config)
+const departmentConfig = computed(() => store.state.configStore.config)
+const rawRules = computed(() => departmentConfig.value.rules)
 
-const rulesContent = ref<string>('')
-
-const cleanHtml = (source: string) => {
-  const res = sanitizeHtml(source, {
+const cleanHtml = () => {
+  return sanitizeHtml(rawRules.value, {
     allowedAttributes: false,
   })
-  rulesContent.value = res
 }
-
-onMounted(() => {
-  const rules = config.value.rules
-  // rulesContent.value = rules
-  cleanHtml(rules)
-})
 </script>
 
 <style lang="postcss" scoped>
