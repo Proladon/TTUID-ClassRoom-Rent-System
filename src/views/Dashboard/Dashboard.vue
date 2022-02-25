@@ -1,44 +1,24 @@
 <template>
   <div class="dashbaord" v-if="departmentConfig">
-    <NForm ref="formRef" :model="formData" :rules="formRules">
-      <NFormItem label="Google 月曆嵌入網址" path="gCalendar">
-        <NInput v-model:value="formData.gCalendar" />
-      </NFormItem>
+    <SideMenu @update="tabChange" />
+    <div>
+      <CommonSetting v-show="curTab === 'common'" />
+      <EmailSettings v-show="curTab === 'email'" />
+      <RulesSetting v-show="curTab === 'rules'" @update="editing"/>
 
-      <NFormItem label="EmailJS" path="mailService">
-        <n-select v-model:value="formData.mailService" :options="emailJsSet" />
-      </NFormItem>
-
-      <NFormItem label="EmailJS - User ID" path="mailjsUserID">
-        <NInput v-model:value="formData.mailjsUserID" />
-      </NFormItem>
-
-      <NFormItem label="EmailJS - Service ID" path="serviceID">
-        <NInput v-model:value="formData.serviceID" />
-      </NFormItem>
-
-      <NFormItem label="EmailJS - Template ID" path="templateID">
-        <NInput v-model:value="formData.templateID" />
-      </NFormItem>
-
-      <NFormItem label="紙本表單連結" path="pdfFormLink">
-        <NInput v-model:value="formData.pdfFormLink" />
-      </NFormItem>
-    </NForm>
-
-    <section>
-      <p class="text-left mb-[5px]">規定及注意事項</p>
-      <RulesEditor @update="editing" />
-    </section>
-
-    <div class="text-right mt-[30px]">
-      <NButton type="primary" @click="updateConfig">儲存設定</NButton>
+      <div class="text-right mt-[30px]">
+        <NButton type="primary" @click="updateConfig">儲存設定</NButton>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import RulesEditor from './components/RulesEditor.vue'
+import SideMenu from './components/SideMenu.vue'
+import CommonSetting from './components/CommonSetting.vue'
+import EmailSettings from './components/EmailSetting.vue'
+import RulesSetting from './components/RulesSetting.vue'
+
 import { computed, onMounted, reactive, ref, watch } from '@vue/runtime-core'
 import { NButton, NSelect, NInput, NForm, NFormItem, useMessage } from 'naive-ui'
 import { clone, map } from 'lodash-es'
@@ -52,6 +32,7 @@ import { getDepartment } from '@/utils/localstorage'
 const store = useStore()
 const router = useRouter()
 const message = useMessage()
+const curTab = ref<string>('common')
 const formRef = ref<any>(null)
 const formData = reactive({
   gCalendar: '',
@@ -65,13 +46,12 @@ const formData = reactive({
 const formRules = dashboardFormRules
 
 const departmentConfig = computed(() => store.state.configStore.config)
-const emailJsSet = computed(() => {
-  return map(departmentConfig.value.mailJsSet, (service) => ({
-    label: service.name,
-    value: service.name
-  }))
-})
+
 const signin = computed(() => store.state.signin)
+
+const tabChange = (tab: string) => {
+  curTab.value = tab
+}
 
 const editing = (html: string) => {
   formData.rules = html
