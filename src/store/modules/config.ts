@@ -13,6 +13,7 @@ const configStore: Module<any, any> = {
   actions: {
     // => 取得當前部門設定檔
     getDepartmentConfig: async ({ commit, rootState }, department) => {
+      console.log('get')
       const configRef = await getDoc(doc(rootState.db, 'Department', department))
       const config = configRef.data()
       commit('SET_CONFIG', config)

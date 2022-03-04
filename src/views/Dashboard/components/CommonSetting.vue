@@ -13,20 +13,28 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from '@vue/runtime-core'
+import { computed, onMounted, reactive } from '@vue/runtime-core'
 import { NInput, NForm, NFormItem } from 'naive-ui'
+import { useStore } from 'vuex'
+
+const store = useStore()
 
 const formData = reactive({
   gCalendar: '',
-  mailjsUserID: '',
-  serviceID: '',
-  templateID: '',
-  pdfFormLink: '',
-  rules: '',
-  mailService: ''
+  outerLinks: []
 })
 
 const formRules = {}
+
+const departmentConfig = computed(() => store.state.configStore.config)
+
+const syncData = () => {
+  formData.gCalendar = departmentConfig.value.gCalendar
+}
+
+onMounted(() => {
+  syncData()
+})
 </script>
 
 <style lang="postcss" scoped>

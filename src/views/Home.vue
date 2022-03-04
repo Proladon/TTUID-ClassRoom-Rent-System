@@ -26,7 +26,11 @@ const deparments = [
   {
     name: '機械系',
     code: 'MechanicalEngineering'
-  }
+  },
+  {
+    name: 'DEV',
+    code: 'Dev'
+  },
 ]
 
 const selectDepartment = async(department: string) => {
