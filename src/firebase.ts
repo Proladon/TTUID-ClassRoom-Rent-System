@@ -3,6 +3,7 @@ import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import { getFirestore } from 'firebase/firestore'
 
+
 const firebaseConfig = {
   apiKey: 'AIzaSyBZFRiOJ10MU2AAqAZkmRpmR-Lg8ShF45Q',
   authDomain: 'ttu-classroom-rent-9d853.firebaseapp.com',

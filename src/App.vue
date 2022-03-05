@@ -28,7 +28,8 @@ import {
 import theme1 from '@/theme/theme1'
 import { computed, onMounted } from '@vue/runtime-core'
 import { useStore } from 'vuex'
-import { db, } from '@/firebase'
+import { db, app} from '@/firebase'
+import { initializeAuth, browserLocalPersistence, getAuth } from 'firebase/auth'
 import * as ls from 'local-storage'
 import dayjs from 'dayjs'
 import { useRoute, useRouter } from 'vue-router'
@@ -48,6 +49,11 @@ onMounted(async () => {
   store.commit('SET_DEPARTMENT', department)
   await store.dispatch('getDepartmentConfig', department)
 
+  initializeAuth(app, {
+    persistence: browserLocalPersistence,
+    popupRedirectResolver: undefined,
+  })
+  
   await store.dispatch('findUser')
   
   const user: User = ls.get('user')
@@ -59,6 +65,9 @@ onMounted(async () => {
   } else if (user.exp > now) {
     store.commit('SET_SIGNIN', true)
   }
+
+  
+
 })
 </script>
 
