@@ -28,7 +28,7 @@ import {
 import theme1 from '@/theme/theme1'
 import { computed, onMounted } from '@vue/runtime-core'
 import { useStore } from 'vuex'
-import { db } from '@/firebase'
+import { db, } from '@/firebase'
 import * as ls from 'local-storage'
 import dayjs from 'dayjs'
 import { useRoute, useRouter } from 'vue-router'
@@ -52,9 +52,10 @@ onMounted(async () => {
   if (!user) return
 
   const now = dayjs(new Date()).unix()
+  console.log(user.exp, now)
+  console.log(user.exp < now)
   if (user.exp < now) {
-    ls.remove('user')
-    store.commit('SET_SIGNIN', false)
+    await store.dispatch('adminLogOut')
   } else if (user.exp > now) {
     store.commit('SET_SIGNIN', true)
   }

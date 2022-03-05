@@ -7,8 +7,8 @@
         />
       </NFormItem>
 
-      <NFormItem label="紙本表單連結" path="pdfFormLink">
-        <NInput v-model:value="formData.pdfFormLink" placeholder="請輸入連結網址"/>
+      <NFormItem label="紙本表單連結" path="outerLinks">
+        <NInput v-model:value="formData.outerLinks[0].link" placeholder="請輸入連結網址"/>
       </NFormItem>
     </NForm>
     <div class="flex justify-end">
@@ -24,12 +24,17 @@ import useConfig from '@/use/useConfig'
 import { useStore } from 'vuex'
 
 const store = useStore()
-const { gCalendar, updateDepartmentConfig } = useConfig()
+const { gCalendar, outerLinks, updateDepartmentConfig } = useConfig()
 
 const formRef = ref(null)
 const formData = reactive({
   gCalendar: '',
-  outerLinks: [],
+  outerLinks: [
+    {
+      name: '📄 紙本表單',
+      link: '',
+    },
+  ],
 })
 
 const formRules = {
@@ -50,12 +55,13 @@ const departmentConfig = computed(() => store.state.configStore.config)
 const updateCommon = async () => {
   formRef.value.validate(async (errors: any) => {
     if (errors) return
-    await updateDepartmentConfig('gCalendar', formData.gCalendar)
+    await updateDepartmentConfig('any', formData)
   })
 }
 
 const syncData = () => {
   formData.gCalendar = gCalendar.value
+  formData.outerLinks = outerLinks.value
 }
 
 onMounted(() => {

@@ -13,6 +13,7 @@ export default () => {
   const emailJsSet = computed(() => departmentConfig.value.mailJsSet)
   const currentEmailjs = computed(() => departmentConfig.value.currentEmailjs)
   const gCalendar = computed(() => departmentConfig.value.gCalendar)
+  const outerLinks = computed(() => departmentConfig.value.outerLinks)
 
   const refreshConfig = async () => {
     await store.dispatch('getDepartmentConfig', department.value)
@@ -22,9 +23,12 @@ export default () => {
     const deparmentConfigRef = doc(db.value, 'Department', department.value)
 
     try {
-      await updateDoc(deparmentConfigRef, {
-        [key]: newData,
-      })
+      if(key === 'any') await updateDoc(deparmentConfigRef, newData)
+      else {
+        await updateDoc(deparmentConfigRef, {
+          [key]: newData,
+        })
+      }
       message.success('更新成功 !')
       await refreshConfig()
     } catch (error: any) {
@@ -41,6 +45,7 @@ export default () => {
     refreshConfig,
     currentEmailjs,
     gCalendar,
+    outerLinks,
     updateDepartmentConfig
   }
 }

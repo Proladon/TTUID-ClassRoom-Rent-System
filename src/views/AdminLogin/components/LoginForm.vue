@@ -12,7 +12,7 @@
       />
     </NFormItem>
 
-    <NButton class="signin-btn" block type="primary" @click="signin"
+    <NButton class="signin-btn" :loading="loading" block type="primary" @click="signin"
       >登入</NButton
     >
   </NForm>
@@ -34,6 +34,7 @@ const router = useRouter()
 const message = useMessage()
 
 // --- Data ---
+const loading = ref<boolean>(false)
 const formRef = ref<any>(null)
 const formData = reactive({
   email: '',
@@ -67,10 +68,15 @@ const authAccount = async () => {
 }
 
 const signin = async () => {
+  loading.value = true
   formRef.value.validate(async (errors: any) => {
-    if (errors) return
+    if (errors) {
+      loading.value = false
+      return
+    }
     await authAccount()
   })
+  loading.value = false
 }
 </script>
 

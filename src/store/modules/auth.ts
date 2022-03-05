@@ -1,5 +1,12 @@
 import { Module } from 'vuex'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  setPersistence, 
+  browserLocalPersistence, 
+  signOut 
+} from 'firebase/auth'
+import * as ls from 'local-storage'
 
 const authStore: Module<any, any> = {
   state: {
@@ -15,19 +22,29 @@ const authStore: Module<any, any> = {
     },
   },
   actions: {
-    adminLogin: async ({commit}, {email, password}) => {
+    adminLogin: async ({ commit }, { email, password }) => {
       try {
+        const auth = getAuth()
+        console.log(auth)
         const res: any = await signInWithEmailAndPassword(
-          getAuth(),
+          auth,
           email,
           password
         )
+        await setPersistence(auth, browserLocalPersistence)
         commit('SET_SIGNIN', true)
         return [res.user, null]
       } catch (error: any) {
         const errorCode: string = error.code
         return [null, errorCode]
       }
+    },
+
+    adminLogOut: async ({ commit }) => {
+      const auth = getAuth()
+      await signOut(auth)
+      commit('SET_SIGNIN', false)
+      ls.remove('user')
     }
   },
 }
