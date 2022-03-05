@@ -4,8 +4,9 @@
       <n-form-item label="當前使用帳號">
         <n-select
           placeholder="請選擇帳號"
-          v-model:value="selectMailService"
+          v-model:value="selectMailServiceID"
           :options="emailJsSetOptions"
+          :on-update:value="handleSelectMailService"
         />
       </n-form-item>
 
@@ -79,17 +80,17 @@ import {
   useMessage,
 } from 'naive-ui'
 import { useStore } from 'vuex'
-import { map, findIndex } from 'lodash-es'
+import { map, findIndex, find } from 'lodash-es'
 import { doc, updateDoc, getDoc } from 'firebase/firestore'
 import EmailServiceEditModal from './EmailServiceEditModal.vue'
 import useConfig from '@/use/useConfig'
 
 const store = useStore()
 const message = useMessage()
-const { db, department, departmentConfig, emailJsSet, refreshConfig } =
+const { db, department, departmentConfig, emailJsSet, refreshConfig, currentEmailjs } =
   useConfig()
 
-const selectMailService = ref(null)
+const selectMailServiceID = ref(null)
 const selectTableItem = ref(null)
 const showEditModal = ref<Boolean>(false)
 const modalMode = ref<string>('create')
@@ -100,6 +101,11 @@ const emailJsSetOptions = computed(() => {
     value: service.serviceID,
   }))
 })
+
+const handleSelectMailService = async(serviceID) => {
+  selectMailServiceID.value = serviceID
+  if(serviceID !== currentEmailjs.value.serviceID )await updateCurrentEmailJs()
+}
 
 const deleteService = async (service) => {
   const configRef = JSON.parse(JSON.stringify(emailJsSet.value))
@@ -119,8 +125,27 @@ const deleteService = async (service) => {
   }
 }
 
+const updateCurrentEmailJs = async () => {
+  const selectMailService = find(emailJsSet.value, {
+    serviceID: selectMailServiceID.value,
+  })
+  
+  const deparmentConfigRef = doc(db.value, 'Department', department.value)
+
+  try {
+    await updateDoc(deparmentConfigRef, {
+      currentEmailjs: selectMailService,
+    })
+    message.success('更新成功 !')
+    await refreshConfig()
+  } catch (error: any) {
+    console.log(error)
+    message.error(error.code)
+  }
+}
+
 onMounted(() => {
-  selectMailService.value = departmentConfig.value.currentEmailjs?.name || null
+  selectMailServiceID.value = currentEmailjs.value.serviceID || null
 })
 </script>
 
