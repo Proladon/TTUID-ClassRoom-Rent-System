@@ -1,5 +1,8 @@
 <template>
-  <footer class="app-footer">By Proladon @2021</footer>
+  <footer class="app-footer">
+    <p>By Proladon @2021</p>
+    <p>v 2.2.0</p>
+  </footer>
 </template>
 
 <script setup></script>

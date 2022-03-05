@@ -15,10 +15,13 @@
           <div class="w-full flex justify-between items-center">
             <span>EmailJS 帳號列表</span>
             <n-button
-              type="info"
+              type="primary"
+              class="text-gray-800"
               @click=";(modalMode = 'create'), (showEditModal = true)"
-              >新增帳號</n-button
             >
+              <n-icon class="mr-[5px]"><Add /></n-icon>
+              新增帳號
+            </n-button>
           </div>
         </template>
         <div class="overflow-x-auto w-full">
@@ -42,7 +45,9 @@
                 <td>{{ service.serviceID }}</td>
                 <td>{{ service.mailjsUserID }}</td>
                 <td>
+                  <div  class="flex gap-[5px] justify-center">
                   <n-button
+                  type="warning" ghost
                     @click="
                       ;(selectTableItem = service),
                         (modalMode = 'edit'),
@@ -50,7 +55,9 @@
                     "
                     >編輯</n-button
                   >
-                  <n-button @click="deleteService(service)">刪除</n-button>
+                  <n-button @click="deleteService(service)" type="error" ghost>刪除</n-button>
+
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -71,12 +78,14 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from '@vue/runtime-core'
+import { Add } from '@vicons/ionicons5'
 import {
   NForm,
   NFormItem,
   NSelect,
   NTable,
   NButton,
+  NIcon,
   useMessage,
 } from 'naive-ui'
 import { useStore } from 'vuex'

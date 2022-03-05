@@ -61,7 +61,9 @@ const updateCommon = async () => {
 
 const syncData = () => {
   formData.gCalendar = gCalendar.value
-  formData.outerLinks = outerLinks.value
+  if(outerLinks.value) {
+    formData.outerLinks[0].link = outerLinks.value[0] ? outerLinks.value[0].link : ''
+  }
 }
 
 onMounted(() => {

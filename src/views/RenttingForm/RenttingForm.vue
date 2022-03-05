@@ -27,13 +27,14 @@ import { computed, onMounted, ref } from '@vue/runtime-core'
 import { useStore } from 'vuex'
 import dayjs from 'dayjs'
 import * as ls from 'local-storage'
+import useConfig from '@/use/useConfig'
 
 const store = useStore()
-const departmentConfig = computed(() => store.state.configStore.config)
-const currentEmailjs = computed(() => departmentConfig.value.currentEmailjs)
+const message = useMessage()
+const { departmentConfig, currentEmailjs } = useConfig()
+
 
 const loaded = ref(false)
-const message = useMessage()
 const sending = ref(false)
 
 const sendEmail = async (formData: any) => {
@@ -52,8 +53,8 @@ const sendEmail = async (formData: any) => {
       location.reload()
     }, 1000)
   } catch (error) {
-    message.error(`${error}\n 請聯繫管理員`)
-    console.log(error)
+    message.error(`${error.text}\n 請聯繫管理員`)
+    console.log(error.text)
     sending.value = false
   }
 }

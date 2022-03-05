@@ -37,7 +37,7 @@ const emit = defineEmits(['date', 'period'])
 defineProps({
   periodErr: Boolean,
 })
-const selectedPeriods = ref<number[]>([])
+const selectedPeriods = ref<number[]>([0])
 
 const pushPeriod = (key: number) => {
   if (key === 0) {

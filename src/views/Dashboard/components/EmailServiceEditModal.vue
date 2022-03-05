@@ -24,7 +24,7 @@
       </n-form-item>
     </n-form>
     <div class="flex justify-end">
-      <n-button type="primary" @click="save">儲存</n-button>
+      <n-button type="primary" @click="save">{{mode === 'edit'? '儲存' : '新增'}}</n-button>
     </div>
   </n-modal>
 </template>
@@ -54,7 +54,7 @@ const message = useMessage()
 const store = useStore()
 const { db, department, departmentConfig, emailJsSet, updateDepartmentConfig } = useConfig()
 const modalTitle = computed(() => {
-  if (props.mode === 'create') return '新增'
+  if (props.mode === 'create') return '新增帳號'
   return `編輯: ${props.data.name}`
 })
 
