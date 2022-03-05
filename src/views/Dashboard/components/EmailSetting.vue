@@ -103,9 +103,9 @@ const {
   updateDepartmentConfig,
 } = useConfig()
 
-const selectMailServiceID = ref(null)
-const selectTableItem = ref(null)
-const showEditModal = ref<Boolean>(false)
+const selectMailServiceID = ref<any>(null)
+const selectTableItem = ref<any>(null)
+const showEditModal = ref<boolean>(false)
 const modalMode = ref<string>('create')
 
 const emailJsSetOptions = computed(() => {
@@ -115,12 +115,12 @@ const emailJsSetOptions = computed(() => {
   }))
 })
 
-const handleSelectMailService = async (serviceID) => {
+const handleSelectMailService = async (serviceID: string) => {
   selectMailServiceID.value = serviceID
   if (serviceID !== currentEmailjs.value?.serviceID) await updateCurrentEmailJs()
 }
 
-const deleteService = async (service) => {
+const deleteService = async (service: any) => {
   let newMailjsSet = []
   if(emailJsSet.value) newMailjsSet = JSON.parse(JSON.stringify(emailJsSet.value))
   const index = findIndex(newMailjsSet, { serviceID: service.serviceID })

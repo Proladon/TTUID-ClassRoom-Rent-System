@@ -21,7 +21,7 @@ import { NTabs, NTab } from 'naive-ui'
 const emit = defineEmits(['update'])
 
 const curTab = ref('common')
-const tabChange = (tab) => {
+const tabChange = (tab: string) => {
   curTab.value = tab
   emit('update', tab)
 }

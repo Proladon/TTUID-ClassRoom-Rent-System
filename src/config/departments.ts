@@ -1,4 +1,4 @@
-const deparments = {
+const deparments: any = {
   IndustrialDesign:{
     name: '工業設計系',
     code: 'IndustrialDesign',
