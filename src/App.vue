@@ -1,11 +1,14 @@
 <template>
-  <n-config-provider :theme-overrides="theme1" :theme="darkTheme" v-if="config">
-    <NMessageProvider>
+  <n-config-provider :theme-overrides="theme1" :theme="darkTheme" class="flex flex-col justify-between h-full">
+    <NMessageProvider >
       <!-- <n-theme-editor> -->
-      <div class="bg-gray-600">
-        <Navbar class="app-spacing" />
+      <div >
+        <div class="bg-gray-600">
+          <Navbar class="app-spacing" v-if="departmentConfig" />
+        </div>
+        <router-view class="main-view app-spacing" v-if="departmentConfig || curPage === 'Home'"/>
+        
       </div>
-      <router-view class="main-view app-spacing" />
       <Footer />
 
       <!-- </n-theme-editor> -->
@@ -14,6 +17,8 @@
 </template>
 
 <script lang="ts" setup>
+import Navbar from '@/components/Navbar.vue'
+import Footer from '@/components/Footer.vue'
 import {
   NConfigProvider,
   NThemeEditor,
@@ -23,25 +28,34 @@ import {
 import theme1 from '@/theme/theme1'
 import { computed, onMounted } from '@vue/runtime-core'
 import { useStore } from 'vuex'
-import { getDoc, doc } from 'firebase/firestore'
-import { db } from '@/firebase'
+import { db, } from '@/firebase'
 import * as ls from 'local-storage'
 import dayjs from 'dayjs'
+import { useRoute, useRouter } from 'vue-router'
+import { getDepartment } from '@/utils/localstorage'
 
 const store = useStore()
-const config = computed(() => store.state.config)
+const router = useRouter()
+const route = useRoute()
+const departmentConfig = computed(() => store.state.configStore.config)
+const curPage = computed(() => route.name)
+
 
 onMounted(async () => {
-  const configRef = await getDoc(doc(db, 'App', 'config'))
-  const config = configRef.data()
-  store.commit('SET_CONFIG', config)
   store.commit('SET_DB', db)
+  const department = getDepartment()
+  if(!department) return router.push({name: 'Home'})
+  store.commit('SET_DEPARTMENT', department)
+  await store.dispatch('getDepartmentConfig', department)
+
+  await store.dispatch('findUser')
+  
   const user: User = ls.get('user')
   if (!user) return
+
   const now = dayjs(new Date()).unix()
   if (user.exp < now) {
-    ls.remove('user')
-    store.commit('SET_SIGNIN', false)
+    await store.dispatch('adminLogOut')
   } else if (user.exp > now) {
     store.commit('SET_SIGNIN', true)
   }

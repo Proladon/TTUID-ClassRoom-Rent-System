@@ -1,7 +1,7 @@
 <template>
   <NForm :model="formData" :rules="formRules" ref="formRef">
     <NFormItem label="電子信箱" path="email">
-      <NInput placeholder="請輸入" v-model:value="formData.email" />
+      <NInput placeholder="請輸入" v-model:value="formData.email" @keyup.enter.prevent="signin"/>
     </NFormItem>
     <NFormItem label="密碼" path="password">
       <NInput
@@ -9,10 +9,11 @@
         show-password-on="click"
         placeholder="請輸入"
         v-model:value="formData.password"
+        @keyup.enter.prevent="signin"
       />
     </NFormItem>
 
-    <NButton class="signin-btn" block type="primary" @click="signin"
+    <NButton class="signin-btn" :loading="loading" block type="primary" @click.prevent="signin"
       >登入</NButton
     >
   </NForm>
@@ -23,17 +24,17 @@ import { useMessage } from 'naive-ui'
 import { reactive, ref } from '@vue/runtime-core'
 import { NForm, NFormItem, NInput, NButton, FormRules } from 'naive-ui'
 import { emailCheck } from '@/validation/validator'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { authStatus } from '@/config/auth'
-import dayjs from 'dayjs'
-import * as ls from 'local-storage'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
+// --- Use ---
 const store = useStore()
 const router = useRouter()
-const fireAuth = getAuth()
 const message = useMessage()
+
+// --- Data ---
+const loading = ref<boolean>(false)
 const formRef = ref<any>(null)
 const formData = reactive({
   email: '',
@@ -53,39 +54,29 @@ const formRules: FormRules = {
   },
 }
 
+// --- Methods ---
 const authAccount = async () => {
-  formRef.value.validate(async (errors: any) => {
-    if (errors) return
-    try {
-      const res: any = await signInWithEmailAndPassword(
-        fireAuth,
-        formData.email,
-        formData.password
-      )
-      message.success('登入成功')
-      saveUser(res.user)
-      store.commit('SET_SIGNIN', true)
-      router.push({ name: 'Dashboard' })
-    } catch (error: any) {
-      const code: string = error.code
-      message.error(authStatus[code])
-    }
+  const errCode = await store.dispatch('adminLogin', {
+    email: formData.email,
+    password: formData.password,
   })
-}
-
-const saveUser = (user: User) => {
-  ls.set('user', {
-    name: user,
-    uid: user.uid,
-    exp: dayjs(new Date()).add(1, 'd').unix(),
-  })
+  if(errCode) return message.error(authStatus[errCode])
+  if(!errCode) {
+    message.success('登入成功 !')
+    router.push({name: 'Dashboard'})
+  }
 }
 
 const signin = async () => {
+  loading.value = true
   formRef.value.validate(async (errors: any) => {
-    if (errors) return
+    if (errors) {
+      loading.value = false
+      return
+    }
     await authAccount()
   })
+  loading.value = false
 }
 </script>
 

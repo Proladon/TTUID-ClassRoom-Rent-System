@@ -8,14 +8,22 @@ const routes: Array<RouteRecordRaw> = [
     component: Home,
   },
   {
+    path: '/form',
+    name: 'RenttingForm',
+    component: () => import('@/views/RenttingForm/RenttingForm.vue'),
+  },
+  {
     path: '/admin-login',
     name: 'AdminLogin',
-    component: () => import('@/views/AdminLogin.vue'),
+    component: () => import('@/views/AdminLogin/AdminLogin.vue'),
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('@/views/Dashboard.vue'),
+    meta: {
+      requiresAuth: true,
+    },
+    component: () => import('@/views/Dashboard/Dashboard.vue'),
   },
   {
     path: '/rules',

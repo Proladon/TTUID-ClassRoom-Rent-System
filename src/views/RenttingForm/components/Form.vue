@@ -182,6 +182,7 @@
 </template>
 
 <script setup lang="ts">
+import DatePeriod from './DatePeriod.vue'
 import {
   NForm,
   NFormItem,
@@ -201,6 +202,7 @@ import * as ls from 'local-storage'
 
 const emit = defineEmits(['submit'])
 const message = useMessage()
+
 // --- Data ---
 const cd = ref(0)
 const periodErr = ref(false)
@@ -252,8 +254,8 @@ const updatePeriod = (period: number[]) => {
 
 // => 預處理送出資料
 const dataPreprocess = () => {
-  formData.rentDate = dayjs(formData.rentDate).format('YYYY-MM-DD')
-  formData.applyDate = dayjs(new Date()).format('YYYY-MM-DD')
+  // formData.rentDate = dayjs(formData.rentDate).format('YYYY-MM-DD')
+  // formData.applyDate = dayjs(new Date()).format('YYYY-MM-DD')
 
   const list: string[] = []
   formData.classMate.forEach((user: any) => {
@@ -278,8 +280,12 @@ const submitForm = () => {
       return
     }
 
+    const data = JSON.parse(JSON.stringify(formData))
+    data.rentDate = dayjs(formData.rentDate).format('YYYY-MM-DD')
+    data.applyDate = dayjs(new Date()).format('YYYY-MM-DD')
+
     dataPreprocess()
-    emit('submit', formData)
+    emit('submit', data)
   })
 }
 

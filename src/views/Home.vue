@@ -1,73 +1,62 @@
 <template>
   <main class="home">
-    <section id="calendar-wrapper" class="block-container">
-      <NSpin :show="!loaded" class="w-full h-full rounded-md">
-        <iframe
-          v-if="config"
-          class="w-full h-full rounded-md min-h-[500px]"
-          :src="config.gCalendar"
-          frameborder="0"
-          @load="loaded = true"
-        ></iframe>
-      </NSpin>
-    </section>
-    <section id="form-wrapper" class="block-container">
-      <NSpin :show="sending">
-        <RentForm @submit="sendEmail" />
-      </NSpin>
-    </section>
+    <p class="title">選擇系所</p>
+    <div class="departments-list">
+      <n-alert 
+        class="department-block"
+        :class="{activated: department.code === curDeparment}"
+        v-for="department in departments" 
+        :key="department.code" 
+        @click="selectDepartment(department.code)"
+      >
+        {{ department.name }}
+      </n-alert>
+    </div>
   </main>
 </template>
 
 <script setup lang="ts">
-import { useMessage, NSpin } from 'naive-ui'
-import { send } from 'emailjs-com'
-import { computed, onMounted, ref } from '@vue/runtime-core'
+import { NAlert } from 'naive-ui'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import dayjs from 'dayjs'
-import * as ls from 'local-storage'
+import departments from '@/config/departments'
+import useConfig from '@/use/useConfig'
+import { computed } from '@vue/runtime-core'
+
+const { department: curDep  } = useConfig()
 
 const store = useStore()
-const config = computed(() => store.state.config)
-const loaded = ref(false)
-const message = useMessage()
-const sending = ref(false)
+const router = useRouter()
+const curDeparment = computed(() => curDep.value || '')
 
-const sendEmail = async (formData: any) => {
-  sending.value = true
-  try {
-    await send(
-      config.value.serviceID,
-      config.value.templateID,
-      formData,
-      config.value.mailjsUserID
-    )
-    message.success('已成功寄出申請 !')
-    sending.value = false
-    ls.set('cd', dayjs(new Date()).add(10, 'm').unix())
-    setTimeout(() => {
-      location.reload()
-    }, 1000)
-  } catch (error) {
-    message.error(`${error}\n 請聯繫管理員`)
-    console.log(error)
-    sending.value = false
-  }
+
+const selectDepartment = async(department: string) => {
+  store.commit('SET_DEPARTMENT', department)
+  await store.dispatch('adminLogOut')
+  // => 取得當前部門設定檔
+  await store.dispatch('getDepartmentConfig', department)
+  router.push({ name: 'RenttingForm' })
 }
-
-onMounted(async () => {})
 </script>
 
 <style scoped lang="postcss">
-::v-deep .n-spin-content {
-  @apply h-full;
+.title {
+  @apply text-gray-300 text-xl mb-[30px];
 }
-.home {
-  @apply grid grid-cols-2 gap-5;
-  @apply <tablet: grid-cols-1;
+
+.departments-list {
+  @apply grid gap-[30px] max-w-[500px] px-[25px] m-auto;
 }
-.block-container {
-  @apply bg-[#c5baaf] p-5 rounded-xl bg-opacity-30 shadow-xl;
-  transition: 1s;
+
+.department-block {
+  @apply cursor-pointer;
+}
+
+.activated {
+  @apply bg-emerald-300 text-gray-800;
+}
+
+:deep(.activated .n-alert-body__content) {
+  @apply !text-gray-800;
 }
 </style>

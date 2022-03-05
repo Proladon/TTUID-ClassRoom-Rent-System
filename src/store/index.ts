@@ -1,26 +1,25 @@
 import { createStore } from 'vuex'
+import configStore from './modules/config'
+import authStore from './modules/auth'
+import { saveDepartment } from '@/utils/localstorage'
 
 export default createStore({
   state: {
-    config: null,
+    department: null,
     db: null,
-    signin: false,
-    user: null,
   },
   mutations: {
-    SET_CONFIG: (state, config) => {
-      state.config = config
-    },
-    SET_DB: (state, db) => {
+    SET_DB: (state, db): void => {
       state.db = db
     },
-    SET_SIGNIN: (state, status) => {
-      state.signin = status
-    },
-    SET_USER: (state, user) => {
-      state.user = user
+    SET_DEPARTMENT: (state, department): void => {
+      state.department = department
+      saveDepartment(department)
     },
   },
   actions: {},
-  modules: {},
+  modules: {
+    configStore,
+    authStore,
+  },
 })

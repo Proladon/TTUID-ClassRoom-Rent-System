@@ -2,8 +2,8 @@
   <header class="navbar">
     <div class="nav-wrapper">
       <section class="<tablet:hidden">
-        <router-link to="/">
-          <NButton type="primary" ghost> 填寫申請表單 </NButton>
+        <router-link :to="{ name: 'RenttingForm' }">
+          <NButton class="text-gray-600" type="primary"> 填寫申請表單 </NButton>
         </router-link>
       </section>
 
@@ -12,8 +12,8 @@
           <NButton>🔰 規定及注意事項</NButton>
         </router-link>
 
-        <a :href="config.pdfFormLink" target="_blank">
-          <NButton>📄 紙本表單</NButton>
+        <a :href="pdfLink" target="_blank">
+          <NButton block>📄 紙本表單</NButton>
         </a>
 
         <router-link to="/about">
@@ -38,7 +38,7 @@
               <NButton block>🔰 規定及注意事項</NButton>
             </router-link>
 
-            <a :href="config.pdfFormLink" target="_blank">
+            <a :href="pdfLink" target="_blank">
               <NButton block>📄 紙本表單</NButton>
             </a>
 
@@ -50,17 +50,29 @@
       </n-drawer>
 
       <section>
-        <div v-if="!signin">
+        <div v-if="!signin" class="grid grid-cols-2 gap-[10px]">
+          <router-link to="/" class="text-white">
+            <n-button>
+              <p class="mr-[10px]">{{ departments[department].name }}</p>
+              <n-icon><CaretDown /></n-icon>
+            </n-button>
+          </router-link>
           <router-link to="/admin-login">
             <NButton type="primary" ghost> 管理員登入 </NButton>
           </router-link>
         </div>
 
-        <div v-if="signin" class="grid grid-cols-2 gap-4">
+        <div v-if="signin" class="flex gap-[10px]">
+          <router-link to="/" class="text-white">
+            <n-button>
+              <p class="mr-[10px]">{{ departments[department].name }}</p>
+              <n-icon><CaretDown /></n-icon>
+            </n-button>
+          </router-link>
           <router-link to="/dashboard">
             <NButton type="warning"> 後台管理 </NButton>
           </router-link>
-          <NButton @click="signout" type="primary" ghost block> 登出 </NButton>
+          <NButton @click="signout" type="primary" ghost > 登出 </NButton>
         </div>
       </section>
     </div>
@@ -68,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { Menu } from '@vicons/ionicons5'
+import { Menu, CaretDown } from '@vicons/ionicons5'
 import { NButton, NDrawer, NDrawerContent, NIcon, useMessage } from 'naive-ui'
 import { computed, onMounted, ref } from '@vue/runtime-core'
 import * as ls from 'local-storage'
@@ -76,19 +88,23 @@ import { db } from '@/firebase'
 import { query, getDocs, where, collection } from 'firebase/firestore'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import useConfig from '@/use/useConfig'
+import departments from '@/config/departments'
 
+const { outerLinks, department } = useConfig()
+const pdfLink = computed(() => {
+  if (outerLinks.value) return outerLinks.value[0].link
+  return ''
+})
 const store = useStore()
 const router = useRouter()
 const message = useMessage()
-const signin = computed(() => store.state.signin)
-const config = computed(() => store.state.config)
+const signin = computed(() => store.state.authStore.signin)
 
 const active = ref(false)
 
-const signout = () => {
-  ls.remove('user')
-  store.commit('SET_SIGNIN', false)
-  message.warning('已成功登出 !')
+const signout = async() => {
+  await store.dispatch('adminLogOut')
   router.push('/')
 }
 
