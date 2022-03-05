@@ -6,9 +6,7 @@ import { resolve } from 'path'
 export default defineConfig({
   base: '/TTUID-ClassRoom-Rent-System/',
   plugins: [vue(), WindiCSS()],
-  build: {
-    outDir: 'docs',
-  },
+  
   resolve: {
     alias: [{ find: '@', replacement: resolve(__dirname, 'src') }],
   },
