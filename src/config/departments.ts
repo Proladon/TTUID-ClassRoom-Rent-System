@@ -7,10 +7,10 @@ const deparments: any = {
     name: '機械系',
     code: 'MechanicalEngineering'
   },
-  Dev: {
-    name: 'DEV',
-    code: 'Dev'
-  },
+  // Dev: {
+  //   name: 'DEV',
+  //   code: 'Dev'
+  // },
 }
 
 export default deparments
