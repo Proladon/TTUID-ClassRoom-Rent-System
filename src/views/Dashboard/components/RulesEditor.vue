@@ -8,7 +8,7 @@ import Quill from 'quill'
 import { useStore } from 'vuex'
 
 const store = useStore()
-const emit = defineEmits(['update'])
+const emit = defineEmits(['update:content'])
 const quill: any = ref(null)
 
 const departmentConfig = computed(() => store.state.configStore.config)
@@ -21,7 +21,7 @@ onMounted(() => {
   quill.value.root.innerHTML = departmentConfig.value.rules
 
   quill.value.on('text-change', () =>
-    emit('update', quill.value.root.innerHTML)
+    emit('update:content', quill.value.root.innerHTML)
   )
 })
 </script>

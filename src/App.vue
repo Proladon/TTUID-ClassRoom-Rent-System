@@ -1,11 +1,14 @@
 <template>
-  <n-config-provider :theme-overrides="theme1" :theme="darkTheme">
-    <NMessageProvider>
+  <n-config-provider :theme-overrides="theme1" :theme="darkTheme" class="flex flex-col justify-between h-full">
+    <NMessageProvider >
       <!-- <n-theme-editor> -->
-      <div class="bg-gray-600">
-        <Navbar class="app-spacing" v-if="departmentConfig" />
+      <div >
+        <div class="bg-gray-600">
+          <Navbar class="app-spacing" v-if="departmentConfig" />
+        </div>
+        <router-view class="main-view app-spacing" v-if="departmentConfig || curPage === 'Home'"/>
+        
       </div>
-      <router-view class="main-view app-spacing" v-if="departmentConfig || curPage === 'Home'"/>
       <Footer />
 
       <!-- </n-theme-editor> -->
