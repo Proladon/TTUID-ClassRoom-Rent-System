@@ -26,7 +26,7 @@ import { useStore } from 'vuex'
 const store = useStore()
 const { gCalendar, outerLinks, updateDepartmentConfig } = useConfig()
 
-const formRef = ref(null)
+const formRef = ref<any>(null)
 const formData = reactive({
   gCalendar: '',
   outerLinks: [
@@ -42,7 +42,7 @@ const formRules = {
     required: true,
     trigger: 'blur',
     message: '請輸入 Google 月曆嵌入網址',
-    validator: (rule, value) => {
+    validator: (rule: any, value: string | null | undefined) => {
       if (!value) return false
       if(!value.trim()) return false
       return true

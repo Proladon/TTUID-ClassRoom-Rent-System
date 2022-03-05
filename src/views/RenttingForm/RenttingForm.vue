@@ -52,7 +52,7 @@ const sendEmail = async (formData: any) => {
     setTimeout(() => {
       location.reload()
     }, 1000)
-  } catch (error) {
+  } catch (error: any) {
     message.error(`${error.text}\n 請聯繫管理員`)
     console.log(error.text)
     sending.value = false

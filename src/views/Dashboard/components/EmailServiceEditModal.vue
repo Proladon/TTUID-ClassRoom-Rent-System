@@ -58,8 +58,8 @@ const modalTitle = computed(() => {
   return `編輯: ${props.data.name}`
 })
 
-const showModal = ref(false)
-const formRef = ref(null)
+const showModal = ref<boolean>(false)
+const formRef = ref<any>(null)
 const formData = reactive({
   name: '',
   templateID: '',
@@ -85,7 +85,7 @@ const formRules = {
   },
 }
 
-const updateModal = (show) => {
+const updateModal = (show: boolean) => {
   showModal.value = show
   if (!show) {
     setTimeout(() => {
