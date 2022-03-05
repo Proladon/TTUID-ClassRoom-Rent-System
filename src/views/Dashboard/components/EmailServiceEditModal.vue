@@ -52,7 +52,7 @@ const props = defineProps({
 
 const message = useMessage()
 const store = useStore()
-const { db, department, departmentConfig, emailJsSet } = useConfig()
+const { db, department, departmentConfig, emailJsSet, updateDepartmentConfig } = useConfig()
 const modalTitle = computed(() => {
   if (props.mode === 'create') return '新增'
   return `編輯: ${props.data.name}`
@@ -95,8 +95,9 @@ const updateModal = (show) => {
 }
 
 const updateConfig = async () => {
-  const configRef = JSON.parse(JSON.stringify(emailJsSet.value))
-  const itemRef = find(configRef, { serviceID: props.data.serviceID })
+  let newMailjsSet = []
+  if(emailJsSet.value) newMailjsSet = JSON.parse(JSON.stringify(emailJsSet.value))
+  const itemRef = find(newMailjsSet, { serviceID: props.data.serviceID })
 
   if (!itemRef) return
   itemRef.name = formData.name
@@ -104,34 +105,15 @@ const updateConfig = async () => {
   itemRef.serviceID = formData.serviceID
   itemRef.mailjsUserID = formData.mailjsUserID
 
-  const deparmentConfigRef = doc(db.value, 'Department', department.value)
-  try {
-    await updateDoc(deparmentConfigRef, {
-      mailJsSet: configRef,
-    })
-    message.success('更新成功 !')
-    await store.dispatch('getDepartmentConfig', department.value)
-  } catch (error: any) {
-    console.log(error)
-    message.error(error.code)
-  }
+  await updateDepartmentConfig('mailJsSet', newMailjsSet)
 }
 
 const createService = async () => {
-  const configRef = JSON.parse(JSON.stringify(emailJsSet.value))
-  configRef.push(formData)
+  let newMailjsSet = []
+  if(emailJsSet.value) newMailjsSet = JSON.parse(JSON.stringify(emailJsSet.value))
+  newMailjsSet.push(formData)
 
-  const deparmentConfigRef = doc(db.value, 'Department', department.value)
-  try {
-    await updateDoc(deparmentConfigRef, {
-      mailJsSet: configRef,
-    })
-    message.success('更新成功 !')
-    await store.dispatch('getDepartmentConfig', department.value)
-  } catch (error: any) {
-    console.log(error)
-    message.error(error.code)
-  }
+  await updateDepartmentConfig('mailJsSet', newMailjsSet)
 }
 
 const syncData = () => {
@@ -155,6 +137,3 @@ onMounted(() => {
   if (props.mode === 'edit') syncData()
 })
 </script>
-
-<style lang="postcss" scoped>
-</style>

@@ -6,9 +6,9 @@
       <EmailSettings v-show="curTab === 'email'" />
       <RulesSetting v-show="curTab === 'rules'" @update="editing"/>
 
-      <div class="text-right mt-[30px]">
+      <!-- <div class="text-right mt-[30px]">
         <NButton type="primary" @click="updateConfig">儲存所有設定</NButton>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

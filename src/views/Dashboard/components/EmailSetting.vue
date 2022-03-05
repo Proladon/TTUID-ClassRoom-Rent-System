@@ -22,7 +22,7 @@
           </div>
         </template>
         <div class="overflow-x-auto w-full">
-          <n-table :bordered="false" :single-line="false">
+          <n-table :bordered="false" :single-line="false" class="text-center">
             <thead>
               <tr>
                 <th>名稱</th>
@@ -34,7 +34,7 @@
             </thead>
             <tbody>
               <tr
-                v-for="service in departmentConfig.mailJsSet"
+                v-for="service in emailJsSet"
                 :key="service.name"
               >
                 <td>{{ service.name }}</td>
@@ -81,14 +81,18 @@ import {
 } from 'naive-ui'
 import { useStore } from 'vuex'
 import { map, findIndex, find } from 'lodash-es'
-import { doc, updateDoc, getDoc } from 'firebase/firestore'
+import { doc, updateDoc } from 'firebase/firestore'
 import EmailServiceEditModal from './EmailServiceEditModal.vue'
 import useConfig from '@/use/useConfig'
 
 const store = useStore()
 const message = useMessage()
-const { db, department, departmentConfig, emailJsSet, refreshConfig, currentEmailjs } =
-  useConfig()
+const {
+  emailJsSet,
+  refreshConfig,
+  currentEmailjs,
+  updateDepartmentConfig,
+} = useConfig()
 
 const selectMailServiceID = ref(null)
 const selectTableItem = ref(null)
@@ -96,56 +100,45 @@ const showEditModal = ref<Boolean>(false)
 const modalMode = ref<string>('create')
 
 const emailJsSetOptions = computed(() => {
-  return map(departmentConfig.value.mailJsSet, (service) => ({
+  return map(emailJsSet.value, (service) => ({
     label: service.name,
     value: service.serviceID,
   }))
 })
 
-const handleSelectMailService = async(serviceID) => {
+const handleSelectMailService = async (serviceID) => {
   selectMailServiceID.value = serviceID
-  if(serviceID !== currentEmailjs.value.serviceID )await updateCurrentEmailJs()
+  if (serviceID !== currentEmailjs.value?.serviceID) await updateCurrentEmailJs()
 }
 
 const deleteService = async (service) => {
-  const configRef = JSON.parse(JSON.stringify(emailJsSet.value))
-  const index = findIndex(configRef, { serviceID: service.serviceID })
-  configRef.splice(index, 1)
+  let newMailjsSet = []
+  if(emailJsSet.value) newMailjsSet = JSON.parse(JSON.stringify(emailJsSet.value))
+  const index = findIndex(newMailjsSet, { serviceID: service.serviceID })
+  newMailjsSet.splice(index, 1)
 
-  const deparmentConfigRef = doc(db.value, 'Department', department.value)
-  try {
-    await updateDoc(deparmentConfigRef, {
-      mailJsSet: configRef,
-    })
-    message.success('更新成功 !')
-    await refreshConfig()
-  } catch (error: any) {
-    console.log(error)
-    message.error(error.code)
-  }
+  await updateDepartmentConfig('mailJsSet', newMailjsSet)
+  await checkSelectMailService()
 }
 
 const updateCurrentEmailJs = async () => {
   const selectMailService = find(emailJsSet.value, {
     serviceID: selectMailServiceID.value,
   })
-  
-  const deparmentConfigRef = doc(db.value, 'Department', department.value)
-
-  try {
-    await updateDoc(deparmentConfigRef, {
-      currentEmailjs: selectMailService,
-    })
-    message.success('更新成功 !')
-    await refreshConfig()
-  } catch (error: any) {
-    console.log(error)
-    message.error(error.code)
-  }
+  await updateDepartmentConfig('currentEmailjs', selectMailService)
 }
 
-onMounted(() => {
-  selectMailServiceID.value = currentEmailjs.value.serviceID || null
+const checkSelectMailService = async() => {
+  if(!currentEmailjs.value) return
+  const exist = find(emailJsSet.value, {serviceID: selectMailServiceID.value})
+  if(exist) return 
+  await updateDepartmentConfig('currentEmailjs', null)
+  selectMailServiceID.value = null
+}
+
+onMounted(async() => {
+  selectMailServiceID.value = currentEmailjs.value?.serviceID || null
+  await checkSelectMailService()
 })
 </script>
 
