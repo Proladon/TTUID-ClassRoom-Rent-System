@@ -4,9 +4,12 @@ import {
   signInWithEmailAndPassword, 
   setPersistence, 
   browserLocalPersistence, 
-  signOut 
+  signOut ,
 } from 'firebase/auth'
+import { getDoc, doc } from 'firebase/firestore'
 import * as ls from 'local-storage'
+import { find } from 'lodash-es'
+import { saveUser } from '@/utils/localstorage'
 
 const authStore: Module<any, any> = {
   state: {
@@ -22,21 +25,31 @@ const authStore: Module<any, any> = {
     },
   },
   actions: {
-    adminLogin: async ({ commit }, { email, password }) => {
+    adminLogin: async ({ commit, dispatch }, { email, password }) => {
       try {
         const auth = getAuth()
-        console.log(auth)
         const res: any = await signInWithEmailAndPassword(
           auth,
           email,
           password
         )
-        await setPersistence(auth, browserLocalPersistence)
-        commit('SET_SIGNIN', true)
-        return [res.user, null]
+        const existAdmin = await dispatch('findUser', res.user.uid)
+        
+        if(!existAdmin) {
+          // 此系所查無此管理員
+          await dispatch('adminLogOut')
+          return 'department admin 404'
+        }
+        if(existAdmin) {
+          commit('SET_SIGNIN', true)
+          await setPersistence(auth, browserLocalPersistence)
+          commit('SET_USER', existAdmin)
+          saveUser(res.user)
+          return null
+        }
       } catch (error: any) {
         const errorCode: string = error.code
-        return [null, errorCode]
+        return errorCode
       }
     },
 
@@ -45,6 +58,16 @@ const authStore: Module<any, any> = {
       await signOut(auth)
       commit('SET_SIGNIN', false)
       ls.remove('user')
+    },
+
+    findUser: async ({ commit, rootState }, userUID) => {
+      const db = rootState.db
+      const department = rootState.department
+      const configRef = await getDoc(doc(db, 'Admins', department))
+      const admins = configRef.data()
+
+      const isExist = find(admins, { uid: userUID })
+      return isExist
     }
   },
 }

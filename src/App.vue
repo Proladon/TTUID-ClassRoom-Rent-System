@@ -47,13 +47,13 @@ onMounted(async () => {
   if(!department) return router.push({name: 'Home'})
   store.commit('SET_DEPARTMENT', department)
   await store.dispatch('getDepartmentConfig', department)
+
+  await store.dispatch('findUser')
   
   const user: User = ls.get('user')
   if (!user) return
 
   const now = dayjs(new Date()).unix()
-  console.log(user.exp, now)
-  console.log(user.exp < now)
   if (user.exp < now) {
     await store.dispatch('adminLogOut')
   } else if (user.exp > now) {

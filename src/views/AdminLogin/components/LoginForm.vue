@@ -1,7 +1,7 @@
 <template>
   <NForm :model="formData" :rules="formRules" ref="formRef">
     <NFormItem label="電子信箱" path="email">
-      <NInput placeholder="請輸入" v-model:value="formData.email" />
+      <NInput placeholder="請輸入" v-model:value="formData.email" @keyup.enter.prevent="signin"/>
     </NFormItem>
     <NFormItem label="密碼" path="password">
       <NInput
@@ -9,10 +9,11 @@
         show-password-on="click"
         placeholder="請輸入"
         v-model:value="formData.password"
+        @keyup.enter.prevent="signin"
       />
     </NFormItem>
 
-    <NButton class="signin-btn" :loading="loading" block type="primary" @click="signin"
+    <NButton class="signin-btn" :loading="loading" block type="primary" @click.prevent="signin"
       >登入</NButton
     >
   </NForm>
@@ -26,7 +27,6 @@ import { emailCheck } from '@/validation/validator'
 import { authStatus } from '@/config/auth'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { saveUser } from '@/utils/localstorage'
 
 // --- Use ---
 const store = useStore()
@@ -56,13 +56,13 @@ const formRules: FormRules = {
 
 // --- Methods ---
 const authAccount = async () => {
-  const [user, errCode] = await store.dispatch('adminLogin', {
+  const errCode = await store.dispatch('adminLogin', {
     email: formData.email,
     password: formData.password,
   })
   if(errCode) return message.error(authStatus[errCode])
-  if(user) {
-    saveUser(user)
+  if(!errCode) {
+    message.success('登入成功 !')
     router.push({name: 'Dashboard'})
   }
 }
