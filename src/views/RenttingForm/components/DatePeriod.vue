@@ -30,14 +30,14 @@
 <script setup lang="ts">
 import { findIndex } from 'lodash-es'
 import { NButton, NDatePicker } from 'naive-ui'
-import { ref } from '@vue/runtime-core'
+import { onMounted, ref } from '@vue/runtime-core'
 import dayjs from 'dayjs'
 
 const emit = defineEmits(['date', 'period'])
 defineProps({
   periodErr: Boolean,
 })
-const selectedPeriods = ref<number[]>([0])
+const selectedPeriods = ref<number[]>([])
 
 const pushPeriod = (key: number) => {
   if (key === 0) {
@@ -69,6 +69,10 @@ const dateDisabled = (ts: number): boolean => {
 
   return !(date.isAfter(today) && date.isBefore(end))
 }
+
+onMounted(() => {
+  pushPeriod(0)
+})
 </script>
 
 <style lang="postcss" scoped>
