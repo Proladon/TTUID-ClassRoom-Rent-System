@@ -1,16 +1,18 @@
 const deparments: any = {
   IndustrialDesign:{
-    name: '工業設計系',
+    name: '工設系 - 攝影棚借用表單',
     code: 'IndustrialDesign',
   },
   MechanicalEngineering: {
-    name: '機械系',
+    name: '機械系 - 設備/教室借用表單',
     code: 'MechanicalEngineering'
   },
-  // Dev: {
-  //   name: 'DEV',
-  //   code: 'Dev'
-  // },
+}
+
+const env = process.env.NODE_ENV
+if(env === 'development') deparments.Dev = {
+  name: 'DEV',
+  code: 'Dev'
 }
 
 export default deparments

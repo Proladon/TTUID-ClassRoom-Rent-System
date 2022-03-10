@@ -280,19 +280,21 @@ const submitForm = () => {
       return
     }
 
+    dataPreprocess()
     const data = JSON.parse(JSON.stringify(formData))
     data.rentDate = dayjs(formData.rentDate).format('YYYY-MM-DD')
     data.applyDate = dayjs(new Date()).format('YYYY-MM-DD')
 
-    dataPreprocess()
     emit('submit', data)
   })
 }
 
-onMounted(() => {
-  const cd = ls.get('cd')
-  if (cd) console.log(cd)
-})
+// onMounted(() => {
+//   const cdTime = ls.get('cd') * 1000
+//   if (cdTime) {
+//     console.log(dayjs(cdTime).format('YYYY-MM-DD HH:mm:ss'))
+//   }
+// })
 </script>
 
 <style lang="postcss" scoped>

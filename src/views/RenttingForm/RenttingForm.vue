@@ -48,7 +48,7 @@ const sendEmail = async (formData: any) => {
     )
     message.success('已成功寄出申請 !')
     sending.value = false
-    ls.set('cd', dayjs(new Date()).add(10, 'm').unix())
+    ls.set('cd', dayjs().add(10, 'm').unix())
     setTimeout(() => {
       location.reload()
     }, 1000)
