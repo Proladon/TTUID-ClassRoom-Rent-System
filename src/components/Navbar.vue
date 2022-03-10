@@ -52,8 +52,12 @@
       <section>
         <div v-if="!signin" class="grid grid-cols-2 gap-[10px]">
           <router-link to="/" class="text-white">
-            <n-button>
-              <p class="mr-[10px]">{{ departments[department].name }}</p>
+            <n-button >
+              <span class="max-w-[100px] ">
+                <n-ellipsis class="mr-[10px]">
+                  {{ departments[department].name }}
+                </n-ellipsis>
+              </span>
               <n-icon><CaretDown /></n-icon>
             </n-button>
           </router-link>
@@ -64,8 +68,12 @@
 
         <div v-if="signin" class="flex gap-[10px]">
           <router-link to="/" class="text-white">
-            <n-button>
-              <p class="mr-[10px]">{{ departments[department].name }}</p>
+            <n-button >
+              <span class="max-w-[100px] ">
+                <n-ellipsis class="mr-[10px]">
+                  {{ departments[department].name }}
+                </n-ellipsis>
+              </span>
               <n-icon><CaretDown /></n-icon>
             </n-button>
           </router-link>
@@ -81,7 +89,7 @@
 
 <script setup lang="ts">
 import { Menu, CaretDown } from '@vicons/ionicons5'
-import { NButton, NDrawer, NDrawerContent, NIcon, useMessage } from 'naive-ui'
+import { NButton, NDrawer, NDrawerContent, NIcon, NEllipsis, useMessage } from 'naive-ui'
 import { computed, onMounted, ref } from '@vue/runtime-core'
 import * as ls from 'local-storage'
 import { db } from '@/firebase'
