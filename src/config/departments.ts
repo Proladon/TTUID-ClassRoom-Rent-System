@@ -1,6 +1,6 @@
 const deparments: any = {
   IndustrialDesign:{
-    name: '工設系 - 攝影棚借用表單',
+    name: '設計學院 - 攝影棚借用表單',
     code: 'IndustrialDesign',
   },
   MechanicalEngineering: {
