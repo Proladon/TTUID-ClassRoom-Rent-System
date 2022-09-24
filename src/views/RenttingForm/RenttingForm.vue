@@ -16,10 +16,13 @@
         <Form @submit="sendEmail" />
       </NSpin>
     </section>
+
+    <PeriodWarningModal v-if="showPeriodWarningModal" />
   </main>
 </template>
 
 <script setup lang="ts">
+import PeriodWarningModal from '@/components/PeriodWarningModal.vue'
 import Form from './components/Form.vue'
 import { useMessage, NSpin } from 'naive-ui'
 import { send } from 'emailjs-com'
@@ -28,12 +31,13 @@ import { useStore } from 'vuex'
 import dayjs from 'dayjs'
 import * as ls from 'local-storage'
 import useConfig from '@/use/useConfig'
+import { get } from 'lodash-es'
 
 const store = useStore()
 const message = useMessage()
 const { departmentConfig, currentEmailjs } = useConfig()
 
-
+const showPeriodWarningModal = ref(false)
 const loaded = ref(false)
 const sending = ref(false)
 
@@ -59,7 +63,26 @@ const sendEmail = async (formData: any) => {
   }
 }
 
-onMounted(async () => {})
+const checkInAllowPeriod = () => {
+  const config = departmentConfig.value
+  const start = get(config.formAllowPeriods, 'start')
+  const end = get(config.formAllowPeriods, 'end')
+
+  if (start && end) {
+    const startTime = dayjs(start)
+    const endTime = dayjs(end)
+    const now = dayjs()
+
+    if (now.isBefore(startTime)) showPeriodWarningModal.value = true
+    if (now.isAfter(endTime)) showPeriodWarningModal.value = true
+  }
+  console.log('here')
+  return true
+}
+
+onMounted(() => {
+  checkInAllowPeriod()
+})
 </script>
 
 <style scoped lang="postcss">
