@@ -1,7 +1,7 @@
 <template>
   <footer class="app-footer">
     <p>By Proladon @2021</p>
-    <p>v 2.2.4</p>
+    <p>v 2.2.5</p>
   </footer>
 </template>
 

@@ -1,13 +1,19 @@
 <template>
-  <n-config-provider :theme-overrides="theme1" :theme="darkTheme" class="flex flex-col justify-between h-full">
-    <NMessageProvider >
+  <n-config-provider
+    :theme-overrides="theme1"
+    :theme="darkTheme"
+    class="flex flex-col justify-between h-full"
+  >
+    <NMessageProvider>
       <!-- <n-theme-editor> -->
-      <div >
+      <div>
         <div class="bg-gray-600">
           <Navbar class="app-spacing" v-if="departmentConfig" />
         </div>
-        <router-view class="main-view app-spacing" v-if="departmentConfig || curPage === 'Home'"/>
-        
+        <router-view
+          class="main-view app-spacing"
+          v-if="departmentConfig || curPage === 'Home'"
+        />
       </div>
       <Footer />
 
@@ -28,7 +34,7 @@ import {
 import theme1 from '@/theme/theme1'
 import { computed, onMounted } from '@vue/runtime-core'
 import { useStore } from 'vuex'
-import { db, app} from '@/firebase'
+import { db, app } from '@/firebase'
 import { initializeAuth, browserLocalPersistence, getAuth } from 'firebase/auth'
 import * as ls from 'local-storage'
 import dayjs from 'dayjs'
@@ -41,11 +47,10 @@ const route = useRoute()
 const departmentConfig = computed(() => store.state.configStore.config)
 const curPage = computed(() => route.name)
 
-
 onMounted(async () => {
   store.commit('SET_DB', db)
   const department = getDepartment()
-  if(!department) return router.push({name: 'Home'})
+  if (!department) return router.push({ name: 'Home' })
   store.commit('SET_DEPARTMENT', department)
   await store.dispatch('getDepartmentConfig', department)
 
@@ -53,9 +58,9 @@ onMounted(async () => {
     persistence: browserLocalPersistence,
     popupRedirectResolver: undefined,
   })
-  
+
   await store.dispatch('findUser')
-  
+
   const user: User = ls.get('user')
   if (!user) return
 
@@ -65,9 +70,6 @@ onMounted(async () => {
   } else if (user.exp > now) {
     store.commit('SET_SIGNIN', true)
   }
-
-  
-
 })
 </script>
 
