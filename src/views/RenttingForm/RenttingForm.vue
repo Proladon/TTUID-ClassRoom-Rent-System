@@ -67,16 +67,24 @@ const checkInAllowPeriod = () => {
   const config = departmentConfig.value
   const start = get(config.formAllowPeriods, 'start')
   const end = get(config.formAllowPeriods, 'end')
+  if (!start || !end) return
+
+  const turnToMins = (time: string) => {
+    const [hour, min] = time.split(':')
+    const total = Number(hour) * 60 + Number(min)
+    return total
+  }
 
   if (start && end) {
-    const startTime = dayjs(start)
-    const endTime = dayjs(end)
-    const now = dayjs()
+    const startTime = dayjs(start).format('HH:mm')
+    const endTime = dayjs(end).format('HH:mm')
+    const now = dayjs().format('HH:mm')
 
-    if (now.isBefore(startTime)) showPeriodWarningModal.value = true
-    if (now.isAfter(endTime)) showPeriodWarningModal.value = true
+    if (turnToMins(now) < turnToMins(startTime))
+      showPeriodWarningModal.value = true
+    if (turnToMins(now) > turnToMins(endTime))
+      showPeriodWarningModal.value = true
   }
-  console.log('here')
   return true
 }
 

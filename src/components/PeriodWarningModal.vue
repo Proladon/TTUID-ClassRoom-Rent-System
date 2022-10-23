@@ -1,6 +1,6 @@
 <template>
   <n-modal v-model:show="show" :mask-closable="false">
-    <div>
+    <div class="bg-[#2c3e50] rounded-md">
       <div class="modal-body m-[20px]">
         <p>很抱歉，當前非允許填寫時段</p>
         <p>{{ period }}</p>
@@ -40,7 +40,7 @@ const show = ref(true)
 
 <style scoped lang="postcss">
 .modal-body {
-  @apply bg-[#2c3e50] p-[20px] rounded-md shadow-xl;
+  @apply bg-[#2c3e50] p-[20px];
   @apply text-center leading-[30px] font-bold text-[18px];
 }
 </style>
